@@ -1,7 +1,7 @@
-export default function Home() {
+export default function Swap() {
   return (
     <div className="flex flex-col justify-evenly">
-      <h1>Home</h1>
+      <h1>Swap</h1>
     </div>
   );
 }
