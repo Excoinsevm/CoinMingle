@@ -1,9 +1,18 @@
 "use client";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { TransactionReceipt, parseEther } from "viem";
-import { useSendTransaction, useWaitForTransaction } from "wagmi";
+import { useWaitForTransaction, useWalletClient } from "wagmi";
+import { Interface, concat, hexlify } from "ethers/lib/utils";
+import { toast, ToastContainer } from "react-toastify";
+import { TransactionReceipt } from "viem";
+import { EXPLORER } from "@config";
+import Token from "@abis/token.json";
 
 export default function CreateERC20() {
+  const [deployedData, setDeployedData] = useState<`0x${string}`>();
+  const [contractAddress, setContractAddress] = useState<`0x${string}` | null>(
+    null
+  );
+  const [isDeploying, setIsDeploying] = useState(false);
   const [tokenData, setTokenData] = useState({
     name: "",
     symbol: "",
@@ -11,6 +20,7 @@ export default function CreateERC20() {
     supply: 10000,
   });
 
+  const { data: walletClient } = useWalletClient();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTokenData((prev) => ({
       ...prev,
@@ -19,33 +29,62 @@ export default function CreateERC20() {
   };
 
   const onReceipt = async (data: TransactionReceipt) => {
-    console.log(data);
+    setContractAddress(data.contractAddress);
+    toast.success(`Deployed :)`);
+    toast.success(
+      <a
+        target="_blank"
+        href={`${EXPLORER}/address/${data.contractAddress}`}
+        className="underline"
+      >
+        {data.contractAddress}
+      </a>,
+      {
+        autoClose: false,
+      }
+    );
   };
 
   const onError = async (err: Error) => {
-    alert(err.message);
+    toast.error(err.message);
   };
 
   const onSubmit = async (e: FormEvent) => {
+    setIsDeploying(true);
+    const loadingTost = toast.loading(
+      `Creating ${tokenData.name} Token (ERC20)...`
+    );
     e.preventDefault();
-    deployERC20();
+    try {
+      const iface = new Interface(Token.abi);
+      const params = iface.encodeDeploy([
+        tokenData.name,
+        tokenData.symbol,
+        tokenData.decimals || 18,
+        tokenData.supply || 10000,
+      ]);
+      const tx = await walletClient?.sendTransaction({
+        // @ts-ignore
+        data: hexlify(concat([Token.bytecode, params])),
+      });
+      setDeployedData(tx);
+      setTokenData({
+        name: "",
+        symbol: "",
+        decimals: 18,
+        supply: 10000,
+      });
+    } catch (e: any) {
+      onError(e);
+    } finally {
+      setIsDeploying(false);
+      toast.dismiss(loadingTost);
+    }
   };
-
-  /// Deploying ERC20 token
-  const {
-    data: deployedData,
-    isLoading: isDeploying,
-    sendTransaction: deployERC20,
-  } = useSendTransaction({
-    // data: "0xabc",
-    to: "0x5c2E23698eB98cBd12dbaf100227BaF68D1e20fD",
-    value: parseEther("0.002"),
-    onError,
-  });
 
   /// Waiting for tx to mine
   const { isFetching } = useWaitForTransaction({
-    hash: deployedData?.hash,
+    hash: deployedData,
     onSuccess: onReceipt,
     onError,
   });
@@ -61,8 +100,19 @@ export default function CreateERC20() {
           network. This feature can be valuable for launching new projects or
           enhancing liquidity by introducing new tokens.
         </p>
+        <div className="pt-20">
+          {contractAddress && (
+            <a
+              target="_blank"
+              href={`${EXPLORER}/address/${contractAddress}`}
+              className="underline"
+            >
+              Contract: {contractAddress}
+            </a>
+          )}
+        </div>
       </header>
-      <div className="pt-20 p-12 md:w-[85%] lg:w-[75%] md:self-center">
+      <div className="pt-10 p-12 md:w-[85%] lg:w-[75%] md:self-center">
         <form onSubmit={onSubmit} className="flex flex-col gap-12">
           <div className="flex flex-col justify-center items-start">
             <label htmlFor="#name" className="text-black font-medium">
@@ -134,11 +184,16 @@ export default function CreateERC20() {
               type="submit"
               className="w-80 h-16 rounded-xl bg-white disabled:opacity-40"
             >
-              Create
+              {isDeploying
+                ? "Deploying..."
+                : isFetching
+                ? "Waiting..."
+                : "Create"}
             </button>
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 }
