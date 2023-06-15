@@ -129,13 +129,13 @@ export default function CreateERC20() {
   return (
     <div className="flex flex-col h-full justify-center text-center text-white">
       <header>
-        <h1 className="text-3xl font-semibold">Create ERC20 Token</h1>
-        <p className="text-md mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
+        <h1 className="text-lg font-semibold">Create ERC20 Token</h1>
+        <p className="text-sm mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
           Create our own ERC20 tokens on the FANTOM network. This feature can be
           valuable for launching new projects or enhancing liquidity by
           introducing new tokens.
         </p>
-        <div className="pt-20">
+        <div className="pt-5">
           {contractAddress && (
             <a
               target="_blank"
@@ -147,8 +147,8 @@ export default function CreateERC20() {
           )}
         </div>
       </header>
-      <div className="pt-10 p-12 md:w-[85%] lg:w-[75%] md:self-center">
-        <form onSubmit={onSubmit} className="flex flex-col gap-12">
+      <div className="pt-2 p-12 md:w-[85%] lg:w-[75%] md:self-center">
+        <form onSubmit={onSubmit} className="flex flex-col gap-12 text-sm">
           <div className="flex flex-col justify-center items-start">
             <label htmlFor="#name" className="font-medium">
               Name
@@ -217,7 +217,7 @@ export default function CreateERC20() {
             <button
               disabled={isDeploying || isFetching || isSwitchingChain}
               type="submit"
-              className="w-80 h-16 rounded-xl bg-white disabled:opacity-40 text-black"
+              className=" w-64 h-14 rounded-xl bg-white disabled:opacity-40 text-black"
             >
               {isSwitchingChain
                 ? "Switching Chain..."
@@ -225,7 +225,7 @@ export default function CreateERC20() {
                 ? "Deploying.."
                 : isSwitchingChain
                 ? "Switching chain.."
-                : connectedChain?.id != ACTIVE_CHAIN.id
+                : connectedChain?.id != ACTIVE_CHAIN.id && isConnected
                 ? "Switch to FTM"
                 : "Create"}
             </button>

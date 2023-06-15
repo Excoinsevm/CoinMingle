@@ -1,3 +1,5 @@
+"use client";
+
 export default function Swap() {
   return (
     <div className="flex flex-col justify-evenly">

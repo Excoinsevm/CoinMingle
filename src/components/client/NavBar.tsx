@@ -14,7 +14,7 @@ const NavBar = () => {
   return (
     <nav className="py-4 flex flex-row items-center justify-between">
       <div className="flex items-center gap-10">
-        <Link href={"/"} className="font-semibold text-white text-2xl">
+        <Link href={"/"} className="font-semibold text-white text-xl">
           CoinMingle
         </Link>
         <ul className="hidden md:flex items-center gap-6 text-slate-400 font-medium">
@@ -45,7 +45,7 @@ const NavBar = () => {
       </div>
       <div className="flex gap-5 justify-center items-center">
         {!isConnected && (
-          <Image src={"/ftm-logo.svg"} alt="FTM" width={40} height={40} />
+          <Image src={"/ftm-logo.svg"} alt="FTM" width={35} height={35} />
         )}
         <Web3Button balance="show" avatar="hide" icon="hide" label="Connect" />
       </div>
