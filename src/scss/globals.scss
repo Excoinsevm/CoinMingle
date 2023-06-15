@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+// bg-gradient-to-b from-teal-400 to-yellow-200
+
+body {
+  background: radial-gradient(
+    circle at 52.1% -29.6%,
+    #901169 0%,
+    #330083 100.2%
+  );
+
+  @apply text-white;
+}

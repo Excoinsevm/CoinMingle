@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${font.className} w-[90%] flex flex-col justify-evenly max-w-screen-2xl min-h-screen m-auto bg-gradient-to-b from-teal-400 to-yellow-200 text-black`}
+        className={`${font.className} w-[90%] flex flex-col justify-evenly max-w-screen-2xl min-h-screen m-auto`}
       >
         <WalletProvider>
           <NavBar />

@@ -50,7 +50,7 @@ const WalletProvider = ({ children }: IProps) => {
     <WagmiConfig config={wagmiConfig}>
       {children}
       <Web3Modal
-        themeMode="light"
+        themeMode="dark"
         themeVariables={themeVariables}
         projectId={PROJECT_ID}
         ethereumClient={ethereumClient}

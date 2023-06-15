@@ -1,10 +1,16 @@
 "use client";
+import {
+  useAccount,
+  useNetwork,
+  useSwitchNetwork,
+  useWaitForTransaction,
+  useWalletClient,
+} from "wagmi";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useWaitForTransaction, useWalletClient } from "wagmi";
 import { Interface, concat, hexlify } from "ethers/lib/utils";
 import { toast, ToastContainer } from "react-toastify";
 import { TransactionReceipt } from "viem";
-import { EXPLORER } from "@config";
+import { ACTIVE_CHAIN, EXPLORER } from "@config";
 import Token from "@abis/token.json";
 
 export default function CreateERC20() {
@@ -20,7 +26,17 @@ export default function CreateERC20() {
     supply: 10000,
   });
 
+  /** @dev Wagmi hooks to check wallet connected and get signer */
+  const { isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
+
+  /** @dev switching chain if not connected to ftm */
+  const { chain: connectedChain } = useNetwork();
+  const { isLoading: isSwitchingChain, switchNetworkAsync } = useSwitchNetwork({
+    chainId: ACTIVE_CHAIN.id,
+  });
+
+  /** @dev Handling form changing event */
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTokenData((prev) => ({
       ...prev,
@@ -28,6 +44,7 @@ export default function CreateERC20() {
     }));
   };
 
+  /** @dev Handling onTransactionReceipt (MINE) */
   const onReceipt = async (data: TransactionReceipt) => {
     setContractAddress(data.contractAddress);
     toast.success(`Deployed :)`);
@@ -45,19 +62,38 @@ export default function CreateERC20() {
     );
   };
 
+  /** @dev Handling onTransactionError */
   const onError = async (err: Error) => {
-    toast.error(err.message);
+    toast.error(err.name);
+    console.log(err);
   };
 
+  /** @dev Handling form submission */
   const onSubmit = async (e: FormEvent) => {
-    setIsDeploying(true);
-    const loadingTost = toast.loading(
-      `Creating ${tokenData.name} Token (ERC20)...`
-    );
     e.preventDefault();
+
+    /** @dev If wallet is not connected then return with error */
+    if (!isConnected) {
+      toast.error(`Connect wallet first :(`);
+      return;
+    }
+
+    /** @dev Switching chain if correct chain is not connected */
+    if (connectedChain?.id != ACTIVE_CHAIN.id) {
+      try {
+        switchNetworkAsync && (await switchNetworkAsync());
+      } catch (e: any) {
+        onError(e);
+      }
+      return;
+    }
+
+    /** @dev If wallet is connected then processed deployment */
+    setIsDeploying(true);
+    const loadingTost = toast.loading(`Creating ${tokenData.name} ...`);
+
     try {
-      const iface = new Interface(Token.abi);
-      const params = iface.encodeDeploy([
+      const params = new Interface(Token.abi).encodeDeploy([
         tokenData.name,
         tokenData.symbol,
         tokenData.decimals || 18,
@@ -66,23 +102,24 @@ export default function CreateERC20() {
       const tx = await walletClient?.sendTransaction({
         // @ts-ignore
         data: hexlify(concat([Token.bytecode, params])),
+        chain: ACTIVE_CHAIN,
       });
       setDeployedData(tx);
+    } catch (e: any) {
+      onError(e);
+    } finally {
+      setIsDeploying(false);
+      toast.dismiss(loadingTost);
       setTokenData({
         name: "",
         symbol: "",
         decimals: 18,
         supply: 10000,
       });
-    } catch (e: any) {
-      onError(e);
-    } finally {
-      setIsDeploying(false);
-      toast.dismiss(loadingTost);
     }
   };
 
-  /// Waiting for tx to mine
+  /** @dev Waiting for tx to mine */
   const { isFetching } = useWaitForTransaction({
     hash: deployedData,
     onSuccess: onReceipt,
@@ -90,15 +127,13 @@ export default function CreateERC20() {
   });
 
   return (
-    <div className="flex flex-col h-full justify-center text-center text-black">
+    <div className="flex flex-col h-full justify-center text-center text-white">
       <header>
         <h1 className="text-3xl font-semibold">Create ERC20 Token</h1>
         <p className="text-md mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
-          Create our own{" "}
-          <span className="font-semibold text-slate-700">ERC20</span> tokens on
-          the <span className="font-semibold text-slate-700">FANTOM</span>{" "}
-          network. This feature can be valuable for launching new projects or
-          enhancing liquidity by introducing new tokens.
+          Create our own ERC20 tokens on the FANTOM network. This feature can be
+          valuable for launching new projects or enhancing liquidity by
+          introducing new tokens.
         </p>
         <div className="pt-20">
           {contractAddress && (
@@ -115,7 +150,7 @@ export default function CreateERC20() {
       <div className="pt-10 p-12 md:w-[85%] lg:w-[75%] md:self-center">
         <form onSubmit={onSubmit} className="flex flex-col gap-12">
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#name" className="text-black font-medium">
+            <label htmlFor="#name" className="font-medium">
               Name
             </label>
             <input
@@ -131,7 +166,7 @@ export default function CreateERC20() {
           </div>
 
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#symbol" className="text-black font-medium">
+            <label htmlFor="#symbol" className="font-medium">
               Symbol
             </label>
             <input
@@ -146,7 +181,7 @@ export default function CreateERC20() {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#decimals" className="text-black font-medium">
+            <label htmlFor="#decimals" className="font-medium">
               Decimals
             </label>
             <input
@@ -163,7 +198,7 @@ export default function CreateERC20() {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#supply" className="text-black font-medium">
+            <label htmlFor="#supply" className="font-medium">
               Initial Supply
             </label>
             <input
@@ -180,20 +215,29 @@ export default function CreateERC20() {
           </div>
           <div className="w-full">
             <button
-              disabled={isDeploying || isFetching}
+              disabled={isDeploying || isFetching || isSwitchingChain}
               type="submit"
-              className="w-80 h-16 rounded-xl bg-white disabled:opacity-40"
+              className="w-80 h-16 rounded-xl bg-white disabled:opacity-40 text-black"
             >
-              {isDeploying
-                ? "Deploying..."
-                : isFetching
-                ? "Waiting..."
+              {isSwitchingChain
+                ? "Switching Chain..."
+                : isDeploying
+                ? "Deploying.."
+                : isSwitchingChain
+                ? "Switching chain.."
+                : connectedChain?.id != ACTIVE_CHAIN.id
+                ? "Switch to FTM"
                 : "Create"}
             </button>
           </div>
         </form>
       </div>
-      <ToastContainer />
+      <ToastContainer
+        theme="colored"
+        style={{
+          fontWeight: "600",
+        }}
+      />
     </div>
   );
 }
