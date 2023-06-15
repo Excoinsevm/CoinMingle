@@ -13,3 +13,7 @@ body {
 
   @apply text-white;
 }
+
+.btn {
+  @apply h-14 rounded-xl bg-white disabled:opacity-40 text-black;
+}

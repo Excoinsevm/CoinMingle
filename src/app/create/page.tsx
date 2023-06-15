@@ -217,7 +217,7 @@ export default function CreateERC20() {
             <button
               disabled={isDeploying || isFetching || isSwitchingChain}
               type="submit"
-              className=" w-64 h-14 rounded-xl bg-white disabled:opacity-40 text-black"
+              className="btn w-64"
             >
               {isSwitchingChain
                 ? "Switching Chain..."
