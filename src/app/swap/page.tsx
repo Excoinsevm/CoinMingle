@@ -40,6 +40,7 @@ export default function Swap() {
 
   const [openModal, setOpenModal] = useState(false);
   const [tokenAOpened, setTokenAOpened] = useState(false);
+  const [pairAvailable, setPairAvailable] = useState(false);
 
   const { address, isConnected } = useAccount();
   /** @dev switching chain if not connected to ftm */
@@ -66,12 +67,15 @@ export default function Swap() {
     abi: CM_ROUTER.abi,
     functionName: "getPair",
     args: [activeToken?.tokenA, activeToken?.tokenB],
-    watch: true,
+    watch: pairAvailable,
     enabled:
       isConnected && activeToken?.tokenA && activeToken?.tokenB ? true : false,
     onSuccess(data) {
       if (data === NULL_ADDRESS) {
         toast.error("No pair available");
+        setPairAvailable(false);
+      } else {
+        setPairAvailable(true);
       }
     },
   });
@@ -351,7 +355,7 @@ export default function Swap() {
         <div
           className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
             isFetchingAmountOut ? "bg-slate-200" : "bg-white"
-          } bg-opacity-20 backdrop-blur-3xl rounded-2xl`}
+          } bg-opacity-10 backdrop-blur-3xl rounded-2xl`}
         >
           <div className="flex gap-3 items-center justify-center">
             <input
@@ -366,11 +370,14 @@ export default function Swap() {
               autoFocus
             />
             <div
-              className="flex gap-4 justify-center items-center px-5 py-2 cursor-pointer border border-slate-100 rounded-2xl"
+              className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
               onClick={() => open(true)}
             >
-              <p className="font-semibold">{tokenA_data?.symbol}</p>
-              <p className="text-2xl">&#8650;</p>
+              <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-semibold">{tokenA_data?.symbol}</p>
+                <p className="text-2xl">&#8650;</p>
+              </div>
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
@@ -384,7 +391,7 @@ export default function Swap() {
             </div>
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
-                Balance:{" "}
+                Balance :{" "}
                 {formatToken(balanceOf?.[0].result, tokenA_data?.decimals)}
               </p>
             )}
@@ -402,7 +409,7 @@ export default function Swap() {
         <div
           className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
             isFetchingAmountOut ? "bg-slate-200" : "bg-white"
-          } bg-opacity-20 backdrop-blur-3xl rounded-2xl`}
+          } bg-opacity-10 backdrop-blur-3xl rounded-2xl`}
         >
           <div className="flex gap-3 items-center justify-center">
             <input
@@ -414,11 +421,14 @@ export default function Swap() {
               className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
             />
             <div
-              className="flex gap-4 justify-center items-center px-5 py-2 cursor-pointer border border-slate-100 rounded-2xl"
+              className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
               onClick={() => open(false)}
             >
-              <p className="font-semibold">{tokenB_data?.symbol}</p>
-              <p className="text-2xl">&#8650;</p>
+              <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-semibold">{tokenB_data?.symbol}</p>
+                <p className="text-2xl">&#8650;</p>
+              </div>
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
@@ -432,7 +442,7 @@ export default function Swap() {
             </div>
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
-                Balance:{" "}
+                Balance :{" "}
                 {formatToken(balanceOf?.[1].result, tokenB_data?.decimals)}
               </p>
             )}

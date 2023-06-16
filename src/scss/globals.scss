@@ -10,6 +10,9 @@ body {
     #901169 0%,
     #330083 100.2%
   );
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 
   @apply text-white;
 }
