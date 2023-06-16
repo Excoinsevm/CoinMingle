@@ -1,4 +1,4 @@
-import { formatUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 
 export const formatToken = (
   amount: BigInt | undefined,
@@ -7,4 +7,11 @@ export const formatToken = (
   return amount && Number(amount) > 0
     ? decimals && formatUnits(BigInt(amount.toString()), decimals)
     : 0;
+};
+
+export const parseToken = (
+  amount: string | undefined,
+  decimals: number | undefined
+) => {
+  return amount && decimals && parseUnits(`${Number(amount)}`, decimals);
 };

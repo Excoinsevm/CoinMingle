@@ -2,7 +2,6 @@ import { Poppins } from "next/font/google";
 import { MAIN_METADATA } from "@contents/metadata";
 import WalletProvider from "@components/client/WalletProvider";
 import NavBar from "@components/client/NavBar";
-import "react-toastify/dist/ReactToastify.css";
 import "@scss/globals.scss";
 
 const font = Poppins({

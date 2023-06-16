@@ -8,7 +8,7 @@ import {
 } from "wagmi";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Interface, concat, hexlify } from "ethers/lib/utils";
-import { toast, ToastContainer } from "react-toastify";
+import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt } from "viem";
 import { ACTIVE_CHAIN, EXPLORER } from "@config";
 import Token from "@abis/token.json";
@@ -54,11 +54,8 @@ export default function CreateERC20() {
         href={`${EXPLORER}/address/${data.contractAddress}`}
         className="underline"
       >
-        {data.contractAddress}
-      </a>,
-      {
-        autoClose: false,
-      }
+        View Transaction
+      </a>
     );
   };
 
@@ -129,8 +126,8 @@ export default function CreateERC20() {
   return (
     <div className="flex flex-col h-full justify-center text-center text-white">
       <header>
-        <h1 className="text-lg font-semibold">Create ERC20 Token</h1>
-        <p className="text-sm mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
+        <h1 className="text-2xl font-medium">Create ERC20 Token</h1>
+        <p className="text-md text-slate-300 mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
           Create our own ERC20 tokens on the FANTOM network. This feature can be
           valuable for launching new projects or enhancing liquidity by
           introducing new tokens.
@@ -150,7 +147,7 @@ export default function CreateERC20() {
       <div className="pt-2 p-12 md:w-[85%] lg:w-[75%] md:self-center">
         <form onSubmit={onSubmit} className="flex flex-col gap-12 text-sm">
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#name" className="font-medium">
+            <label htmlFor="#name" className="font-medium text-md">
               Name
             </label>
             <input
@@ -166,7 +163,7 @@ export default function CreateERC20() {
           </div>
 
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#symbol" className="font-medium">
+            <label htmlFor="#symbol" className="font-medium text-md">
               Symbol
             </label>
             <input
@@ -181,7 +178,7 @@ export default function CreateERC20() {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#decimals" className="font-medium">
+            <label htmlFor="#decimals" className="font-medium text-md">
               Decimals
             </label>
             <input
@@ -198,7 +195,7 @@ export default function CreateERC20() {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#supply" className="font-medium">
+            <label htmlFor="#supply" className="font-medium text-md">
               Initial Supply
             </label>
             <input
@@ -232,12 +229,7 @@ export default function CreateERC20() {
           </div>
         </form>
       </div>
-      <ToastContainer
-        theme="colored"
-        style={{
-          fontWeight: "600",
-        }}
-      />
+      <Toaster />
     </div>
   );
 }
