@@ -61,6 +61,21 @@ export default function Swap() {
     enabled: isConnected && activeToken?.tokenB ? true : false,
   });
 
+  const { data: pairAddress } = useContractRead({
+    address: CoinMingleRouter as `0x`,
+    abi: CM_ROUTER.abi,
+    functionName: "getPair",
+    args: [activeToken?.tokenA, activeToken?.tokenB],
+    watch: true,
+    enabled:
+      isConnected && activeToken?.tokenA && activeToken?.tokenB ? true : false,
+    onSuccess(data) {
+      if (data === NULL_ADDRESS) {
+        toast.error("No pair available");
+      }
+    },
+  });
+
   /** @dev Fetching the balances of selected token */
   const {
     data: balanceOf,
@@ -80,23 +95,20 @@ export default function Swap() {
         functionName: "balanceOf",
         args: [address as `0x`],
       },
+      {
+        address: activeToken?.tokenA as `0x`,
+        abi: erc20ABI,
+        functionName: "balanceOf",
+        args: [pairAddress as `0x`],
+      },
+      {
+        address: activeToken?.tokenB as `0x`,
+        abi: erc20ABI,
+        functionName: "balanceOf",
+        args: [pairAddress as `0x`],
+      },
     ],
     watch: true,
-  });
-
-  const { data: pairAddress } = useContractRead({
-    address: CoinMingleRouter as `0x`,
-    abi: CM_ROUTER.abi,
-    functionName: "getPair",
-    args: [activeToken?.tokenA, activeToken?.tokenB],
-    watch: true,
-    enabled:
-      isConnected && activeToken?.tokenA && activeToken?.tokenB ? true : false,
-    onSuccess(data) {
-      if (data === NULL_ADDRESS) {
-        toast.error("No pair available");
-      }
-    },
   });
 
   const { data: perTokenOut, refetch: refetchPerTokenOut } = useContractRead({
@@ -362,7 +374,14 @@ export default function Swap() {
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
-            <div></div>
+            <div>
+              {pairAddress && pairAddress !== NULL_ADDRESS ? (
+                <p className="text-sm text-slate-300">
+                  Pool :{" "}
+                  {formatToken(balanceOf?.[2].result, tokenA_data?.decimals)}
+                </p>
+              ) : null}
+            </div>
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
                 Balance:{" "}
@@ -403,7 +422,14 @@ export default function Swap() {
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
-            <div></div>
+            <div>
+              {pairAddress && pairAddress !== NULL_ADDRESS ? (
+                <p className="text-sm text-slate-300">
+                  Pool :{" "}
+                  {formatToken(balanceOf?.[3].result, tokenB_data?.decimals)}
+                </p>
+              ) : null}
+            </div>
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
                 Balance:{" "}
@@ -417,9 +443,9 @@ export default function Swap() {
           <>
             <div className="flex items-center justify-between mt-2 text-sm">
               <p className="flex items-center justify-center text-slate-300">
-                1 {tokenB_data?.symbol} ={" "}
+                1 {tokenA_data?.symbol} ={" "}
                 {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
-                {tokenA_data?.symbol}
+                {tokenB_data?.symbol}
               </p>
               <p className="flex items-center justify-center text-slate-300">
                 Expected Output :{" "}
