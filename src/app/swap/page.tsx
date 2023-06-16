@@ -23,6 +23,8 @@ import {
 import CM_ROUTER from "@abis/Router.json";
 import TOKENS from "@db/tokens.json";
 import Image from "next/image";
+import { CgArrowLongDownC } from "react-icons/cg";
+import { BiDownArrow } from "react-icons/bi";
 
 export default function Swap() {
   const [tokenInput, setTokenInput] = useState({
@@ -354,8 +356,8 @@ export default function Swap() {
       <form className="w-[35rem] flex flex-col gap-2" onSubmit={onSubmit}>
         <div
           className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
-            isFetchingAmountOut ? "bg-slate-200" : "bg-white"
-          } bg-opacity-10 backdrop-blur-3xl rounded-2xl`}
+            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-white"
+          } bg-opacity-10 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
         >
           <div className="flex gap-3 items-center justify-center">
             <input
@@ -376,7 +378,7 @@ export default function Swap() {
               <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
               <div className="flex items-center justify-between gap-2">
                 <p className="font-semibold">{tokenA_data?.symbol}</p>
-                <p className="text-2xl">&#8650;</p>
+                <BiDownArrow />
               </div>
             </div>
           </div>
@@ -398,18 +400,16 @@ export default function Swap() {
           </div>
         </div>
         <div className="flex items-center justify-center cursor-pointer">
-          <h1
-            className=" w-fit px-5 py-4 text-center text-[1.5rem] bg-white bg-opacity-20 backdrop-blur-3xl rounded-full"
+          <CgArrowLongDownC
+            className="text-5xl hover:rotate-180 transition-all"
             onClick={reverseSwap}
-          >
-            &#8693;
-          </h1>
+          />
         </div>
 
         <div
           className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
-            isFetchingAmountOut ? "bg-slate-200" : "bg-white"
-          } bg-opacity-10 backdrop-blur-3xl rounded-2xl`}
+            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-white"
+          } bg-opacity-10 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
         >
           <div className="flex gap-3 items-center justify-center">
             <input
@@ -427,7 +427,7 @@ export default function Swap() {
               <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
               <div className="flex items-center justify-between gap-2">
                 <p className="font-semibold">{tokenB_data?.symbol}</p>
-                <p className="text-2xl">&#8650;</p>
+                <BiDownArrow />
               </div>
             </div>
           </div>
@@ -520,7 +520,7 @@ export default function Swap() {
                 tokenAOpened
                   ? token.address !== activeToken.tokenB && (
                       <div
-                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3"
+                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
                         key={token.address}
                         onClick={() => close(token.address)}
                       >
@@ -538,7 +538,7 @@ export default function Swap() {
                     )
                   : token.address !== activeToken.tokenA && (
                       <div
-                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3"
+                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
                         key={token.address}
                         onClick={() => close(token.address)}
                       >
