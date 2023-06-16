@@ -6,14 +6,14 @@ import {
   useWaitForTransaction,
   useWalletClient,
 } from "wagmi";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, memo } from "react";
 import { Interface, concat, hexlify } from "ethers/lib/utils";
 import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt } from "viem";
 import { ACTIVE_CHAIN, EXPLORER } from "@config";
 import Token from "@abis/token.json";
 
-export default function CreateERC20() {
+const CreateERC20 = () => {
   const [deployedData, setDeployedData] = useState<`0x${string}`>();
   const [contractAddress, setContractAddress] = useState<`0x${string}` | null>(
     null
@@ -232,4 +232,5 @@ export default function CreateERC20() {
       <Toaster />
     </div>
   );
-}
+};
+export default memo(CreateERC20);

@@ -1,7 +1,11 @@
-export default function Liquidity() {
+import { memo } from "react";
+
+const Liquidity = () => {
   return (
     <div className="flex flex-col justify-evenly">
       <h1>Liquidity</h1>
     </div>
   );
-}
+};
+
+export default memo(Liquidity);

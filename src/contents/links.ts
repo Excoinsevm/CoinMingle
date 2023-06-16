@@ -4,15 +4,15 @@ interface ILinks {
 }
 export const Links: ILinks[] = [
   {
-    name: "Create",
-    path: "/create",
-  },
-  {
     name: "Swap",
     path: "/swap",
   },
   {
-    name: "Liquidity",
+    name: "Pool",
     path: "/liquidity",
+  },
+  {
+    name: "Create",
+    path: "/create",
   },
 ];

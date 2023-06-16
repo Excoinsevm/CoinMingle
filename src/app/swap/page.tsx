@@ -6,7 +6,7 @@ import {
   EXPLORER,
 } from "@config";
 import { formatToken, parseToken } from "@utils";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, memo } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt, parseUnits } from "viem";
 import {
@@ -26,7 +26,7 @@ import Image from "next/image";
 import { CgArrowLongDownC } from "react-icons/cg";
 import { BiDownArrow } from "react-icons/bi";
 
-export default function Swap() {
+const Swap = () => {
   const [tokenInput, setTokenInput] = useState({
     tokenA: "",
     tokenB: "",
@@ -513,14 +513,14 @@ export default function Swap() {
       </form>
 
       {openModal && (
-        <div className="cursor-pointer flex justify-center items-center fixed top-0 left-0 right-0 z-50 w-screen h-screen bg-white bg-opacity-10 backdrop-blur-sm">
-          <div className="w-[27rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white">
+        <div className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-white bg-opacity-10 backdrop-blur-sm">
+          <div className="w-[27rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
             <div className="overflow-x-scroll h-[85%] flex flex-col gap-5 py-7 px-4">
               {TOKENS.map((token) =>
                 tokenAOpened
                   ? token.address !== activeToken.tokenB && (
                       <div
-                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
+                        className="cursor-pointer border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
                         key={token.address}
                         onClick={() => close(token.address)}
                       >
@@ -559,8 +559,8 @@ export default function Swap() {
           </div>
         </div>
       )}
-
       <Toaster />
     </div>
   );
-}
+};
+export default memo(Swap);
