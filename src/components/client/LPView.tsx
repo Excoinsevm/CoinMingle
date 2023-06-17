@@ -16,6 +16,7 @@ import { parseToken, formatToken } from "@utils";
 import { Toaster, toast } from "react-hot-toast";
 import CM_ROUTER from "@abis/Router.json";
 import CM_LP from "@abis/LP.json";
+import Image from "next/image";
 
 interface ILPViewProps {
   tokens: {
@@ -282,10 +283,21 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     >
       <div className="flex justify-around items-center">
         <div className="">
-          <h1 className="text-lg">
-            {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}/
-            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
-          </h1>
+          <div className="flex gap-1">
+            <div className="flex items-center">
+              <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
+              <h1 className="text-xl text-bold">
+                {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+              </h1>
+            </div>
+            <p>/</p>
+            <div className="flex items-center">
+              <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
+              <h1 className="text-xl text-bold">
+                {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+              </h1>
+            </div>
+          </div>
           <p className="text-sm text-slate-300">
             Rate : {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
             {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}/
@@ -311,8 +323,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                       : // @ts-ignore
                         reservesAmounts[1] || 0,
                     tokenA_data?.decimals
-                  )}{" "}
-                {tokenA_data?.symbol}
+                  )}
               </p>
             )
           }
@@ -334,8 +345,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                     : // @ts-ignore
                       reservesAmounts[0] || 0,
                   tokenB_data?.decimals
-                )}{" "}
-              {tokenB_data?.symbol}
+                )}
             </p>
           )}
         </div>
@@ -354,7 +364,12 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                 Expected Output
               </h1>
               <div className="flex items-center justify-between">
-                <p>{tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}</p>
+                <div className="flex items-center">
+                  <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
+                  <h1 className="text-xl text-bold">
+                    {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+                  </h1>
+                </div>
                 <p>
                   {amountsOutFetched &&
                     formatToken(
@@ -375,7 +390,12 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                 </p>
               </div>
               <div className="flex items-center justify-between">
-                <p>{tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}</p>
+                <div className="flex items-center">
+                  <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
+                  <h1 className="text-xl text-bold">
+                    {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+                  </h1>
+                </div>
                 <p>
                   {
                     //@ts-ignore

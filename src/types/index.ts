@@ -23,3 +23,8 @@ export interface ITokens {
   tokenA: IToken;
   tokenB: IToken;
 }
+
+export interface IPoolPost {
+  tokenA: string;
+  tokenB: string;
+}

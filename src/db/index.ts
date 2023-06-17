@@ -1,5 +1,29 @@
-import { ILPAdded, IToken, ITokens } from "@types";
+import { ILPAdded, IPoolPost, IToken, ITokens } from "@types";
 import { POOL_PATH } from "@config";
+
+export const getRoutePath = async (tokens: IPoolPost): Promise<string[]> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`${POOL_PATH}`, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tokens),
+      });
+      const data: { path: string[] } = await response.json();
+      if (data.path.length > 0) {
+        resolve(data.path);
+      }
+      reject("No pool available");
+    } catch (e) {
+      reject("Internal Server Error getting route path.");
+    }
+  });
+};
 
 export const getAllTokens = async (): Promise<IToken[]> => {
   return new Promise(async (resolve, reject) => {

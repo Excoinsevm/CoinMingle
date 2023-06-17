@@ -26,21 +26,15 @@ import Image from "next/image";
 import { CgArrowLongDownC } from "react-icons/cg";
 import { BiDownArrow } from "react-icons/bi";
 import { IToken } from "@types";
-import { getAllTokens } from "@db";
+import { getAllTokens, getRoutePath } from "@db";
 
 const Swap = () => {
   const [allTokens, setAllTokens] = useState<IToken[]>([]);
+  const [routePath, setRoutePath] = useState<string[]>();
+  const [openModal, setOpenModal] = useState(false);
+  const [tokenAOpened, setTokenAOpened] = useState(false);
+  const [pairAvailable, setPairAvailable] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const tokens = await getAllTokens();
-        setAllTokens(tokens);
-      } catch (e: any) {
-        toast.error(e);
-      }
-    })();
-  }, []);
   const [tokenInput, setTokenInput] = useState({
     tokenA: "",
     tokenB: "",
@@ -53,10 +47,6 @@ const Swap = () => {
   }>({
     tokenA: WFTM,
   });
-
-  const [openModal, setOpenModal] = useState(false);
-  const [tokenAOpened, setTokenAOpened] = useState(false);
-  const [pairAvailable, setPairAvailable] = useState(false);
 
   const { address, isConnected } = useAccount();
   /** @dev switching chain if not connected to ftm */
@@ -82,10 +72,9 @@ const Swap = () => {
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getPair",
-    args: [activeToken?.tokenA, activeToken?.tokenB],
+    args: routePath ? [routePath[0], routePath[1]] : undefined,
     watch: pairAvailable,
-    enabled:
-      isConnected && activeToken?.tokenA && activeToken?.tokenB ? true : false,
+    enabled: isConnected && routePath && routePath.length == 2,
     onSuccess(data) {
       if (data === NULL_ADDRESS) {
         toast.error("No pair available");
@@ -135,11 +124,8 @@ const Swap = () => {
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getAmountOut",
-    args: [
-      parseToken("1", tokenA_data?.decimals),
-      [activeToken?.tokenA, activeToken?.tokenB],
-    ],
-    enabled: pairAddress !== NULL_ADDRESS ? true : false,
+    args: [parseToken("1", tokenA_data?.decimals), routePath],
+    enabled: routePath && routePath?.length >= 2,
     watch: true,
   });
 
@@ -156,6 +142,7 @@ const Swap = () => {
     data: approvalData,
     isLoading: isApprove,
     writeAsync: giveApproval,
+    reset: resetApproval,
   } = useContractWrite({
     address: activeToken.tokenA as "0x",
     abi: erc20ABI,
@@ -175,14 +162,8 @@ const Swap = () => {
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getAmountOut",
-    args: [
-      parseToken(tokenInput.tokenA, tokenA_data?.decimals),
-      [activeToken?.tokenA, activeToken?.tokenB],
-    ],
-    enabled:
-      pairAddress && pairAddress !== NULL_ADDRESS && tokenInput.fetch
-        ? true
-        : false,
+    args: [parseToken(tokenInput.tokenA, tokenA_data?.decimals), routePath],
+    enabled: pairAddress && routePath && tokenInput.fetch ? true : false,
     watch: true,
     onSuccess(data) {
       setTokenInput((prev) => ({
@@ -196,6 +177,7 @@ const Swap = () => {
     data: swapHash,
     writeAsync: swap,
     isLoading: isSwapping,
+    reset: resetSwap,
   } = useContractWrite({
     address: CoinMingleRouter,
     abi: CM_ROUTER.abi,
@@ -203,11 +185,41 @@ const Swap = () => {
     args: [
       parseToken(tokenInput.tokenA, tokenA_data?.decimals),
       amountOut,
-      [activeToken?.tokenA, activeToken?.tokenB],
+      routePath,
       address,
       Math.round(+new Date() / 1000) + 300,
     ],
   });
+
+  useEffect(() => {
+    (async () => {
+      if (activeToken.tokenA && activeToken.tokenB) {
+        try {
+          //@ts-ignore
+          const path = await getRoutePath(activeToken);
+          setRoutePath(path);
+        } catch (e: any) {
+          setTokenInput({
+            tokenA: "",
+            tokenB: "",
+            fetch: false,
+          });
+          toast.error(e);
+        }
+      }
+    })();
+  }, [activeToken]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const tokens = await getAllTokens();
+        setAllTokens(tokens);
+      } catch (e: any) {
+        toast.error(e);
+      }
+    })();
+  }, []);
 
   /** @dev Handling onTransactionError */
   const onError = async (err: Error) => {
@@ -229,6 +241,9 @@ const Swap = () => {
         duration: 10000,
       }
     );
+
+    resetApproval();
+    resetSwap();
   };
 
   /** @dev Waiting for tx to mine */
