@@ -4,6 +4,7 @@ import {
   CoinMingleRouter,
   NULL_ADDRESS,
   EXPLORER,
+  WFTM,
 } from "@config";
 import { formatToken, parseToken } from "@utils";
 import { ChangeEvent, FormEvent, useState, memo } from "react";
@@ -27,6 +28,7 @@ import { CgArrowLongDownC } from "react-icons/cg";
 import { BiDownArrow } from "react-icons/bi";
 
 const Swap = () => {
+  const [allTokens, setAllTokens] = useState(TOKENS);
   const [tokenInput, setTokenInput] = useState({
     tokenA: "",
     tokenB: "",
@@ -37,7 +39,7 @@ const Swap = () => {
     tokenA?: string;
     tokenB?: string;
   }>({
-    tokenA: "0xf1277d1ed8ad466beddf92ef448a132661956621",
+    tokenA: WFTM,
   });
 
   const [openModal, setOpenModal] = useState(false);
@@ -259,6 +261,7 @@ const Swap = () => {
   };
 
   const onSubmit = async (e: FormEvent) => {
+    e.stopPropagation();
     e.preventDefault();
 
     /** @dev If wallet is not connected then return with error */
@@ -386,7 +389,7 @@ const Swap = () => {
             <div>
               {pairAddress && pairAddress !== NULL_ADDRESS ? (
                 <p className="text-sm text-slate-300">
-                  Pool :{" "}
+                  Reserve :{" "}
                   {formatToken(balanceOf?.[2].result, tokenA_data?.decimals)}
                 </p>
               ) : null}
@@ -435,7 +438,7 @@ const Swap = () => {
             <div>
               {pairAddress && pairAddress !== NULL_ADDRESS ? (
                 <p className="text-sm text-slate-300">
-                  Pool :{" "}
+                  Reserve :{" "}
                   {formatToken(balanceOf?.[3].result, tokenB_data?.decimals)}
                 </p>
               ) : null}
@@ -493,8 +496,12 @@ const Swap = () => {
             ? "Switching Chain..."
             : isSwapping
             ? "Swapping..."
+            : isFetching
+            ? "Waiting for receipt..."
             : isApprove
             ? "Approving..."
+            : pairAddress === NULL_ADDRESS
+            ? "No Pair Available"
             : connectedChain?.id != ACTIVE_CHAIN.id && isConnected
             ? "Switch to FTM"
             : balanceOf?.[0] &&
@@ -513,10 +520,13 @@ const Swap = () => {
       </form>
 
       {openModal && (
-        <div className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-white bg-opacity-10 backdrop-blur-sm">
+        <div
+          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-white bg-opacity-10 backdrop-blur-sm"
+          onClick={() => setOpenModal(false)}
+        >
           <div className="w-[27rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
             <div className="overflow-x-scroll h-[85%] flex flex-col gap-5 py-7 px-4">
-              {TOKENS.map((token) =>
+              {allTokens.map((token) =>
                 tokenAOpened
                   ? token.address !== activeToken.tokenB && (
                       <div
