@@ -7,7 +7,7 @@ import {
   WFTM,
 } from "@config";
 import { formatToken, parseToken } from "@utils";
-import { ChangeEvent, FormEvent, useState, memo } from "react";
+import { ChangeEvent, FormEvent, useState, memo, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt, parseUnits } from "viem";
 import {
@@ -22,13 +22,25 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import CM_ROUTER from "@abis/Router.json";
-import TOKENS from "@db/tokens.json";
 import Image from "next/image";
 import { CgArrowLongDownC } from "react-icons/cg";
 import { BiDownArrow } from "react-icons/bi";
+import { IToken } from "@types";
+import { getAllTokens } from "@db";
 
 const Swap = () => {
-  const [allTokens, setAllTokens] = useState(TOKENS);
+  const [allTokens, setAllTokens] = useState<IToken[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const tokens = await getAllTokens();
+        setAllTokens(tokens);
+      } catch (e: any) {
+        toast.error(e);
+      }
+    })();
+  }, []);
   const [tokenInput, setTokenInput] = useState({
     tokenA: "",
     tokenB: "",
@@ -490,7 +502,7 @@ const Swap = () => {
                 parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals)) ||
             !isAmountOutFetched
           }
-          className="btn w-full mt-10"
+          className="btn w-full h-16 mt-10"
         >
           {isSwitchingChain
             ? "Switching Chain..."

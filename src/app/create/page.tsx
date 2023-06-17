@@ -214,7 +214,7 @@ const CreateERC20 = () => {
             <button
               disabled={isDeploying || isFetching || isSwitchingChain}
               type="submit"
-              className="btn w-64"
+              className="btn w-64 h-16"
             >
               {isSwitchingChain
                 ? "Switching Chain..."

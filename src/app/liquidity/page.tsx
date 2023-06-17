@@ -1,5 +1,5 @@
 "use client";
-import { memo, useState, ChangeEvent, FormEvent } from "react";
+import { memo, useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Image from "next/image";
 import { BiDownArrow } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
@@ -28,9 +28,18 @@ import {
 import { formatToken, parseToken } from "@utils";
 import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt, parseUnits, formatUnits, isAddress } from "viem";
+import {
+  getAllTokens,
+  getUserPositions,
+  updateTokens,
+  updateUserPosition,
+} from "@db";
+import { ILPAdded, ITokens } from "@types";
+import LPView from "@components/client/LPView";
 
 const Liquidity = () => {
   const [allTokens, setAllTokens] = useState(TOKENS);
+  const [allPositions, setAllPositions] = useState<ILPAdded[]>([]);
   const [activeAdd, setActiveAdd] = useState(false);
   const [pairAvailable, setPairAvailable] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -48,7 +57,29 @@ const Liquidity = () => {
     tokenA: WFTM,
   });
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const tokens = await getAllTokens();
+        setAllTokens(tokens);
+      } catch (e: any) {
+        toast.error(e);
+      }
+    })();
+  }, []);
+
   const { address, isConnected } = useAccount();
+  useEffect(() => {
+    (async () => {
+      try {
+        const positions = await getUserPositions(address);
+        setAllPositions(() => positions);
+      } catch (e: any) {
+        toast.error(e);
+      }
+    })();
+  }, [address, activeAdd == false]);
+
   const { data: balanceFTM } = useBalance({ address });
   /** @dev switching chain if not connected to ftm */
   const { chain: connectedChain } = useNetwork();
@@ -350,7 +381,6 @@ const Liquidity = () => {
   };
 
   const onSubmit = async (e: FormEvent) => {
-    e.stopPropagation();
     e.preventDefault();
 
     /** @dev If wallet is not connected then return with error */
@@ -418,6 +448,32 @@ const Liquidity = () => {
       } else {
         await addLiquidity();
       }
+      const newTokens: ITokens = {
+        tokenA: {
+          address: activeToken.tokenA!,
+          name: tokenA_data?.name!,
+          symbol: tokenA_data?.symbol!,
+        },
+        tokenB: {
+          address: activeToken.tokenB!,
+          name: tokenB_data?.name!,
+          symbol: tokenB_data?.symbol!,
+        },
+      };
+      const newPosition: ILPAdded = {
+        tokens: {
+          tokenA: activeToken.tokenA!,
+          tokenB: activeToken.tokenB!,
+        },
+        amounts: {
+          tokenA: tokenInput.tokenA,
+          tokenB: tokenInput.tokenB,
+        },
+      };
+      await updateUserPosition(address as "0x", newPosition);
+      await updateTokens(newTokens);
+      const tokens = await getAllTokens();
+      setAllTokens(tokens);
       toast.success("Liquidity Added");
     } catch (e: any) {
       onError(e);
@@ -559,7 +615,7 @@ const Liquidity = () => {
 
             <button
               type="submit"
-              className="btn w-full mt-10"
+              className="btn w-full h-16 mt-10"
               disabled={
                 isSwitchingChain ||
                 isFetching ||
@@ -676,8 +732,20 @@ const Liquidity = () => {
           </div>
         </div>
       ) : (
-        <div className="h-96">
-          <h1>My Positions</h1>
+        <div className="h-[35rem] overflow-y-scroll flex flex-col items-center gap-7">
+          {allPositions.length > 0 ? (
+            allPositions.map((position, i) => (
+              <LPView
+                key={i}
+                tokens={position.tokens}
+                amounts={position.amounts}
+              />
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <h1>No Position available.</h1>
+            </div>
+          )}
         </div>
       )}
 
@@ -695,6 +763,7 @@ const Liquidity = () => {
                 className="w-full h-12 px-4 bg-transparent outline-none border rounded-2xl placeholder:text-slate-300"
                 required
                 autoFocus
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
             <div className="overflow-x-scroll h-[85%] flex flex-col gap-5 py-7 px-4">
