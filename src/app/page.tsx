@@ -11,7 +11,7 @@ export default function Home() {
             <span className="font-bold text-white"> Fantom.</span>
           </h1>
           <p className="text-xl font-medium text-slate-300 text-center">
-            We've done it carefully and simply.
+            We have done it carefully and simply.
             <br /> Combined with the ingredients make for beautiful landings.
           </p>
         </div>
@@ -20,7 +20,7 @@ export default function Home() {
           href={"/swap"}
           className="btn w-60 h-14 flex items-center justify-center"
         >
-          Let's Swap
+          Swap
         </Link>
       </div>
     </div>
