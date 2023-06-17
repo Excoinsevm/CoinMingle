@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useState, ChangeEvent, useEffect, FC } from "react";
+import { FormEvent, useState, ChangeEvent, memo, FC } from "react";
 import {
   useAccount,
   useToken,
@@ -30,20 +30,6 @@ interface ILPViewProps {
 
 const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
   const [fullView, setFullView] = useState(false);
-  const [isTokenAttached, setTokenAttached] = useState(false);
-  const [activeToken, setActiveToken] = useState({
-    tokenA: "",
-    tokenB: "",
-  });
-
-  useEffect(() => {
-    setActiveToken(() => ({
-      tokenA: tokens.tokenA,
-      tokenB: tokens.tokenB,
-    }));
-    setTokenAttached(true);
-  }, []);
-
   const [lpAmount, setLpAmount] = useState<string>("");
 
   const { address, isConnected } = useAccount();
@@ -54,15 +40,15 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
   });
   /** @dev Read tokenA data */
   const { data: tokenA_data } = useToken({
-    address: activeToken.tokenA as `0x`,
+    address: tokens.tokenA as `0x`,
     chainId: ACTIVE_CHAIN.id,
-    enabled: isConnected && isTokenAttached,
+    enabled: isConnected,
   });
   /** @dev Read tokenB data */
   const { data: tokenB_data } = useToken({
-    address: activeToken.tokenB as `0x`,
+    address: tokens.tokenB as `0x`,
     chainId: ACTIVE_CHAIN.id,
-    enabled: isConnected && isTokenAttached,
+    enabled: isConnected,
   });
 
   /** @dev Getting Per token Out */
@@ -72,9 +58,9 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     functionName: "getAmountOut",
     args: [
       parseToken("1", tokenA_data?.decimals),
-      [activeToken.tokenA, activeToken.tokenB],
+      [tokens.tokenA, tokens.tokenB],
     ],
-    enabled: isConnected && isTokenAttached,
+    enabled: isConnected,
     watch: true,
   });
 
@@ -83,8 +69,8 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getPair",
-    args: [activeToken?.tokenA, activeToken?.tokenB],
-    enabled: isConnected && isTokenAttached,
+    args: [tokens?.tokenA, tokens?.tokenB],
+    enabled: isConnected,
   });
 
   /** @dev Fetching the balances LP token */
@@ -93,7 +79,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     abi: erc20ABI,
     functionName: "balanceOf",
     args: [address as `0x`],
-    enabled: isConnected && isTokenAttached && pairAddress ? true : false,
+    enabled: isConnected && pairAddress ? true : false,
     watch: true,
   });
 
@@ -112,7 +98,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
       abi: CM_LP.abi,
       functionName: "getReserves",
       watch: true,
-      enabled: isConnected && isTokenAttached && pairAddress ? true : false,
+      enabled: isConnected && pairAddress ? true : false,
     }
   );
 
@@ -127,14 +113,14 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     functionName: "getAmountsOutForLiquidity",
     args: [
       // @ts-ignore
-      isTokenAttached && parseEther(lpAmount as "0") <= balanceOf
+      parseEther(lpAmount as "0") <= balanceOf
         ? parseEther(lpAmount as "0")
         : 0,
-      activeToken.tokenA,
-      activeToken.tokenB,
+      tokens.tokenA,
+      tokens.tokenB,
     ],
     watch: true,
-    enabled: isConnected && isTokenAttached && pairAddress ? true : false,
+    enabled: isConnected && pairAddress ? true : false,
   });
 
   /** @dev Getting Approvals */
@@ -143,7 +129,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     abi: erc20ABI,
     functionName: "allowance",
     args: [address as "0x", CoinMingleRouter],
-    enabled: isConnected && isTokenAttached,
+    enabled: isConnected,
     watch: true,
   });
 
@@ -169,8 +155,8 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     abi: CM_ROUTER.abi,
     functionName: "removeLiquidity",
     args: [
-      activeToken.tokenA,
-      activeToken.tokenB,
+      tokens.tokenA,
+      tokens.tokenB,
       parseEther(lpAmount as "0"),
       address,
       Math.round(+new Date() / 1000) + 300,
@@ -187,7 +173,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     abi: CM_ROUTER.abi,
     functionName: "removeLiquidityFTM",
     args: [
-      activeToken.tokenA === WFTM ? activeToken.tokenB : activeToken.tokenA,
+      tokens.tokenA === WFTM ? tokens.tokenB : tokens.tokenA,
       parseEther(lpAmount as "0"),
       address,
       Math.round(+new Date() / 1000) + 300,
@@ -276,7 +262,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     }
 
     try {
-      if (activeToken.tokenA === WFTM || activeToken.tokenB === WFTM) {
+      if (tokens.tokenA === WFTM || tokens.tokenB === WFTM) {
         await removeLiquidityFTM();
       } else {
         await removeLiquidity();
@@ -297,54 +283,61 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
       <div className="flex justify-around items-center">
         <div className="">
           <h1 className="text-lg">
-            {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}/
-            {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+            {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}/
+            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
           </h1>
           <p className="text-sm text-slate-300">
             Rate : {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
-            {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}/
-            {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}/
+            {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </p>
         </div>
         <div className="">
           <h1 className="text-lg">
             {Number(amounts.tokenA).toLocaleString()}{" "}
-            {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+            {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </h1>
-          <p className="text-sm text-slate-300">
-            Reserve :{" "}
-            {reservesFetched &&
-              formatToken(
-                // @ts-ignore
-                tokenARead === activeToken.tokenA
-                  ? // @ts-ignore
-                    reservesAmounts[0] || 0
-                  : // @ts-ignore
-                    reservesAmounts[1] || 0,
-                tokenA_data?.decimals
-              )}{" "}
-            {tokenA_data?.symbol}
-          </p>
+          {
+            // @ts-ignore
+            typeof reservesAmounts && reservesFetched && (
+              <p className="text-sm text-slate-300">
+                Reserve :{" "}
+                {reservesFetched &&
+                  formatToken(
+                    // @ts-ignore
+                    tokenARead === tokens.tokenA
+                      ? // @ts-ignore
+                        reservesAmounts[0] || 0
+                      : // @ts-ignore
+                        reservesAmounts[1] || 0,
+                    tokenA_data?.decimals
+                  )}{" "}
+                {tokenA_data?.symbol}
+              </p>
+            )
+          }
         </div>
         <div className="">
           <h1 className="text-lg">
             {Number(amounts.tokenB).toLocaleString()}{" "}
-            {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
           </h1>
-          <p className="text-sm text-slate-300">
-            Reserve :{" "}
-            {reservesFetched &&
-              formatToken(
-                // @ts-ignore
-                tokenARead === activeToken.tokenA
-                  ? // @ts-ignore
-                    reservesAmounts[1] || 0
-                  : // @ts-ignore
-                    reservesAmounts[0] || 0,
-                tokenB_data?.decimals
-              )}{" "}
-            {tokenB_data?.symbol}
-          </p>
+          {typeof reservesAmounts && reservesFetched && (
+            <p className="text-sm text-slate-300">
+              Reserve :{" "}
+              {reservesFetched &&
+                formatToken(
+                  // @ts-ignore
+                  tokenARead === tokens.tokenA
+                    ? // @ts-ignore
+                      reservesAmounts[1] || 0
+                    : // @ts-ignore
+                      reservesAmounts[0] || 0,
+                  tokenB_data?.decimals
+                )}{" "}
+              {tokenB_data?.symbol}
+            </p>
+          )}
         </div>
       </div>
       {fullView && (
@@ -361,14 +354,12 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                 Expected Output
               </h1>
               <div className="flex items-center justify-between">
-                <p>
-                  {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
-                </p>
+                <p>{tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}</p>
                 <p>
                   {amountsOutFetched &&
                     formatToken(
                       // @ts-ignore
-                      tokenARead === activeToken.tokenA
+                      tokenARead === tokens.tokenA
                         ? // @ts-ignore
                           amountsOut
                           ? // @ts-ignore
@@ -384,16 +375,14 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                 </p>
               </div>
               <div className="flex items-center justify-between">
-                <p>
-                  {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
-                </p>
+                <p>{tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}</p>
                 <p>
                   {
                     //@ts-ignore
                     amountsOutFetched &&
                       formatToken(
                         // @ts-ignore
-                        tokenARead === activeToken.tokenA
+                        tokenARead === tokens.tokenA
                           ? // @ts-ignore
                             amountsOut
                             ? // @ts-ignore
@@ -474,4 +463,4 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
   );
 };
 
-export default LPView;
+export default memo(LPView);

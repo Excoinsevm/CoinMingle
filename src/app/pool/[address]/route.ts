@@ -26,7 +26,55 @@ export const POST = async (req: Request, context: IContext) => {
     const DB: IDB = JSON.parse(readFileSync(DB_PATH).toString());
     let userPositions = DB[context.params.address];
     if (userPositions) {
-      userPositions.push(body);
+      let alreadyHave = userPositions.find((tx) => {
+        return (
+          (tx.tokens.tokenA === body.tokens.tokenA ||
+            tx.tokens.tokenA === body.tokens.tokenB) &&
+          (tx.tokens.tokenB === body.tokens.tokenA ||
+            tx.tokens.tokenB === body.tokens.tokenB)
+        );
+      });
+
+      if (alreadyHave) {
+        const index = userPositions.findIndex((tx) => {
+          return (
+            (tx.tokens.tokenA === body.tokens.tokenA ||
+              tx.tokens.tokenA === body.tokens.tokenB) &&
+            (tx.tokens.tokenB === body.tokens.tokenA ||
+              tx.tokens.tokenB === body.tokens.tokenB)
+          );
+        });
+
+        alreadyHave = {
+          ...alreadyHave,
+          amounts: {
+            tokenA:
+              alreadyHave.tokens.tokenA === body.tokens.tokenA
+                ? (
+                    Number(alreadyHave.amounts.tokenA) +
+                    Number(body.amounts.tokenA)
+                  ).toString()
+                : (
+                    Number(alreadyHave.amounts.tokenA) +
+                    Number(body.amounts.tokenB)
+                  ).toString(),
+            tokenB:
+              alreadyHave.tokens.tokenB === body.tokens.tokenB
+                ? (
+                    Number(alreadyHave.amounts.tokenB) +
+                    Number(body.amounts.tokenB)
+                  ).toString()
+                : (
+                    Number(alreadyHave.amounts.tokenB) +
+                    Number(body.amounts.tokenA)
+                  ).toString(),
+          },
+        };
+
+        userPositions[index] = alreadyHave;
+      } else {
+        userPositions.push(body);
+      }
     } else {
       userPositions = [body];
     }

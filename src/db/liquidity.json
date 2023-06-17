@@ -2,132 +2,22 @@
 	"0xaf220a1bdEFdA230b98eBD358AFF4a1Be0dDC0F1": [
 		{
 			"tokens": {
-				"tokenA": "0x812666209b90344ec8e528375298ab9045c2bd08",
-				"tokenB": "0x3a2367bd29058B3827b6A97fdCFaaF7426e9A5B7"
-			},
-			"amounts": {
-				"tokenA": "7",
-				"tokenB": "7000"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0xC02C2EB530D6349F267BC9e6C7077603874131B2",
-				"tokenB": "0x3a2367bd29058B3827b6A97fdCFaaF7426e9A5B7"
-			},
-			"amounts": {
-				"tokenA": "21000",
-				"tokenB": "83927"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0xC02C2EB530D6349F267BC9e6C7077603874131B2",
-				"tokenB": "0x05AEFde00217147234232360f759862d946E3Ce4"
-			},
-			"amounts": {
-				"tokenA": "2000",
-				"tokenB": "6000"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "200",
-				"tokenB": "66.666666"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "200",
-				"tokenB": "64.518064"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0xC02C2EB530D6349F267BC9e6C7077603874131B2",
-				"tokenB": "0x05AEFde00217147234232360f759862d946E3Ce4"
-			},
-			"amounts": {
-				"tokenA": "200",
-				"tokenB": "680.5834"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "200",
-				"tokenB": "58.773098"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0xC02C2EB530D6349F267BC9e6C7077603874131B2",
-				"tokenB": "0x3a2367bd29058B3827b6A97fdCFaaF7426e9A5B7"
-			},
-			"amounts": {
-				"tokenA": "200",
-				"tokenB": "798.5474"
-			}
-		},
-		{
-			"tokens": {
 				"tokenA": "0x3a2367bd29058B3827b6A97fdCFaaF7426e9A5B7",
 				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
 			},
 			"amounts": {
-				"tokenA": "200",
-				"tokenB": "50.09095"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "2000",
-				"tokenB": "572.035677"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "2000",
-				"tokenB": "451.507985"
+				"tokenA": "10141.9503",
+				"tokenB": "50600"
 			}
 		},
 		{
 			"tokens": {
 				"tokenA": "0xC02C2EB530D6349F267BC9e6C7077603874131B2",
-				"tokenB": "0x05AEFde00217147234232360f759862d946E3Ce4"
+				"tokenB": "0xa79465a58A098E17a44AB2E651371c8c8Cb47189"
 			},
 			"amounts": {
-				"tokenA": "200",
-				"tokenB": "1072.3676"
-			}
-		},
-		{
-			"tokens": {
-				"tokenA": "0x05AEFde00217147234232360f759862d946E3Ce4",
-				"tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
-			},
-			"amounts": {
-				"tokenA": "1072",
-				"tokenB": "199.931425"
+				"tokenA": "10200",
+				"tokenB": "102000"
 			}
 		}
 	]

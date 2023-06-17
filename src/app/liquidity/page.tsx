@@ -80,7 +80,7 @@ const Liquidity = () => {
     })();
   }, [address, activeAdd == false]);
 
-  const { data: balanceFTM } = useBalance({ address });
+  const { data: balanceFTM } = useBalance({ address: address && address });
   /** @dev switching chain if not connected to ftm */
   const { chain: connectedChain } = useNetwork();
   const { isLoading: isSwitchingChain, switchNetworkAsync } = useSwitchNetwork({
