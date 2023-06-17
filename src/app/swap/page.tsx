@@ -229,7 +229,7 @@ const Swap = () => {
   /** @dev Handling form changing event */
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const match = /^\d*\.?\d*$/.test(e.target.value);
-    if (match) {
+    if (match && e.target.value.length <= 21) {
       setTokenInput((prev) => {
         if (!e.target.value) {
           return {
