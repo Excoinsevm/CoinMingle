@@ -5,7 +5,7 @@ import { BiDownArrow } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
 import CM_ROUTER from "@abis/Router.json";
 import CM_LP from "@abis/LP.json";
-import TOKENS from "@db/tokens.json";
+import { IToken } from "@types";
 import {
   WFTM,
   ACTIVE_CHAIN,
@@ -38,7 +38,7 @@ import { ILPAdded, ITokens } from "@types";
 import LPView from "@components/client/LPView";
 
 const Liquidity = () => {
-  const [allTokens, setAllTokens] = useState(TOKENS);
+  const [allTokens, setAllTokens] = useState<IToken[]>([]);
   const [allPositions, setAllPositions] = useState<ILPAdded[]>([]);
   const [activeAdd, setActiveAdd] = useState(false);
   const [pairAvailable, setPairAvailable] = useState(false);
@@ -488,7 +488,7 @@ const Liquidity = () => {
   };
 
   return (
-    <div className="flex flex-col justify-evenly w-[90%] md:w-[80%] lg:w-[60%]">
+    <div className="flex flex-col justify-evenly w-[90%] lg:w-[60%]">
       <header className="text-center flex flex-col gap-4 items-center">
         <h1 className="text-2xl font-medium">Pool</h1>
         <p className="text-md text-slate-300 max-w-xl">

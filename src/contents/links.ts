@@ -12,6 +12,10 @@ export const Links: ILinks[] = [
     path: "/liquidity",
   },
   {
+    name: "Market",
+    path: "/market",
+  },
+  {
     name: "Create",
     path: "/create",
   },

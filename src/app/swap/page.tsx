@@ -9,7 +9,7 @@ import {
 import { formatToken, parseToken } from "@utils";
 import { ChangeEvent, FormEvent, useState, memo, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { TransactionReceipt, parseUnits } from "viem";
+import { TransactionReceipt, parseUnits, formatEther, parseEther } from "viem";
 import {
   erc20ABI,
   useAccount,
@@ -20,6 +20,7 @@ import {
   useSwitchNetwork,
   useContractWrite,
   useWaitForTransaction,
+  useBalance,
 } from "wagmi";
 import CM_ROUTER from "@abis/Router.json";
 import Image from "next/image";
@@ -31,6 +32,7 @@ import { getAllTokens, getRoutePath } from "@db";
 const Swap = () => {
   const [allTokens, setAllTokens] = useState<IToken[]>([]);
   const [routePath, setRoutePath] = useState<string[]>();
+  const [routeContent, setRouteContent] = useState<IToken[]>();
   const [openModal, setOpenModal] = useState(false);
   const [tokenAOpened, setTokenAOpened] = useState(false);
   const [pairAvailable, setPairAvailable] = useState(false);
@@ -49,6 +51,9 @@ const Swap = () => {
   });
 
   const { address, isConnected } = useAccount();
+  const { data: balanceOfFTM } = useBalance({
+    address: address ? address : undefined,
+  });
   /** @dev switching chain if not connected to ftm */
   const { chain: connectedChain } = useNetwork();
   const { isLoading: isSwitchingChain, switchNetworkAsync } = useSwitchNetwork({
@@ -68,13 +73,32 @@ const Swap = () => {
     enabled: isConnected && activeToken?.tokenB ? true : false,
   });
 
-  const { data: pairAddress } = useContractRead({
+  const { data: pairAddressA } = useContractRead({
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getPair",
     args: routePath ? [routePath[0], routePath[1]] : undefined,
     watch: pairAvailable,
-    enabled: isConnected && routePath && routePath.length == 2,
+    enabled: isConnected && routePath && routePath.length >= 2,
+    onSuccess(data) {
+      if (data === NULL_ADDRESS) {
+        toast.error("No pair available");
+        setPairAvailable(false);
+      } else {
+        setPairAvailable(true);
+      }
+    },
+  });
+
+  const { data: pairAddressB } = useContractRead({
+    address: CoinMingleRouter as `0x`,
+    abi: CM_ROUTER.abi,
+    functionName: "getPair",
+    args: routePath
+      ? [routePath[routePath.length - 2], routePath[routePath.length - 1]]
+      : undefined,
+    watch: pairAvailable,
+    enabled: isConnected && routePath && routePath.length >= 2,
     onSuccess(data) {
       if (data === NULL_ADDRESS) {
         toast.error("No pair available");
@@ -108,13 +132,13 @@ const Swap = () => {
         address: activeToken?.tokenA as `0x`,
         abi: erc20ABI,
         functionName: "balanceOf",
-        args: [pairAddress as `0x`],
+        args: [pairAddressA as `0x`],
       },
       {
         address: activeToken?.tokenB as `0x`,
         abi: erc20ABI,
         functionName: "balanceOf",
-        args: [pairAddress as `0x`],
+        args: [pairAddressB as `0x`],
       },
     ],
     watch: true,
@@ -163,7 +187,7 @@ const Swap = () => {
     abi: CM_ROUTER.abi,
     functionName: "getAmountOut",
     args: [parseToken(tokenInput.tokenA, tokenA_data?.decimals), routePath],
-    enabled: pairAddress && routePath && tokenInput.fetch ? true : false,
+    enabled: routePath && tokenInput.fetch ? true : false,
     watch: true,
     onSuccess(data) {
       setTokenInput((prev) => ({
@@ -191,14 +215,49 @@ const Swap = () => {
     ],
   });
 
+  const {
+    data: swapFTMForTokensHash,
+    writeAsync: swapFTMForTokens,
+    isLoading: isSwappingFTM,
+    reset: resetSwapFTMForTokens,
+  } = useContractWrite({
+    address: CoinMingleRouter,
+    abi: CM_ROUTER.abi,
+    functionName: "swapFTMForTokens",
+    args: [amountOut, routePath, address, Math.round(+new Date() / 1000) + 300],
+    value: parseEther(tokenInput.tokenA as "0"),
+  });
+
+  const {
+    data: swapTokensForFTMHash,
+    writeAsync: swapTokensForFTM,
+    isLoading: isSwappingTokens,
+    reset: resetSwapTokensForFTM,
+  } = useContractWrite({
+    address: CoinMingleRouter,
+    abi: CM_ROUTER.abi,
+    functionName: "swapTokensForFTM",
+    args: [
+      parseToken(tokenInput.tokenA, tokenA_data?.decimals),
+      amountOut,
+      routePath,
+      address,
+      Math.round(+new Date() / 1000) + 300,
+    ],
+  });
+
   useEffect(() => {
     (async () => {
       if (activeToken.tokenA && activeToken.tokenB) {
         try {
           //@ts-ignore
-          const path = await getRoutePath(activeToken);
+          const { path, content } = await getRoutePath(activeToken);
           setRoutePath(path);
+          setRouteContent(content);
+          console.log(path, content);
         } catch (e: any) {
+          setRoutePath(undefined);
+          setRouteContent(undefined);
           setTokenInput({
             tokenA: "",
             tokenB: "",
@@ -238,17 +297,23 @@ const Swap = () => {
         View Transaction
       </a>,
       {
-        duration: 10000,
+        duration: 5000,
       }
     );
 
-    resetApproval();
     resetSwap();
+    resetApproval();
+    resetSwapFTMForTokens();
+    resetSwapTokensForFTM();
   };
 
   /** @dev Waiting for tx to mine */
   const { isFetching } = useWaitForTransaction({
-    hash: swapHash?.hash || approvalData?.hash,
+    hash:
+      swapHash?.hash ||
+      swapFTMForTokensHash?.hash ||
+      swapTokensForFTMHash?.hash ||
+      approvalData?.hash,
     onSuccess: onReceipt,
     onError,
   });
@@ -331,7 +396,13 @@ const Swap = () => {
 
     const loadingToast = toast.loading("Swapping...");
     try {
-      await swap();
+      if (activeToken.tokenA === WFTM) {
+        await swapFTMForTokens();
+      } else if (activeToken.tokenB === WFTM) {
+        await swapTokensForFTM();
+      } else {
+        await swap();
+      }
       toast.success("Swapped");
     } catch (e: any) {
       onError(e);
@@ -407,14 +478,16 @@ const Swap = () => {
             >
               <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
               <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold">{tokenA_data?.symbol}</p>
+                <p className="font-semibold">
+                  {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+                </p>
                 <BiDownArrow />
               </div>
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
             <div>
-              {pairAddress && pairAddress !== NULL_ADDRESS ? (
+              {pairAddressA && pairAddressA !== NULL_ADDRESS ? (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
                   {formatToken(balanceOf?.[2].result, tokenA_data?.decimals)}
@@ -424,7 +497,11 @@ const Swap = () => {
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
                 Balance :{" "}
-                {formatToken(balanceOf?.[0].result, tokenA_data?.decimals)}
+                {activeToken.tokenA === WFTM
+                  ? parseFloat(
+                      formatToken(balanceOfFTM?.value, 18)!.toString()
+                    ).toFixed(5)
+                  : formatToken(balanceOf?.[0].result, tokenA_data?.decimals)}
               </p>
             )}
           </div>
@@ -456,24 +533,30 @@ const Swap = () => {
             >
               <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
               <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold">{tokenB_data?.symbol}</p>
+                <p className="font-semibold">
+                  {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+                </p>
                 <BiDownArrow />
               </div>
             </div>
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
             <div>
-              {pairAddress && pairAddress !== NULL_ADDRESS ? (
+              {routePath && (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
                   {formatToken(balanceOf?.[3].result, tokenB_data?.decimals)}
                 </p>
-              ) : null}
+              )}
             </div>
             {isBalanceFetched && (
               <p className="text-sm text-slate-300">
                 Balance :{" "}
-                {formatToken(balanceOf?.[1].result, tokenB_data?.decimals)}
+                {activeToken.tokenB === WFTM
+                  ? parseFloat(
+                      formatToken(balanceOfFTM?.value, 18)!.toString()
+                    ).toFixed(5)
+                  : formatToken(balanceOf?.[1].result, tokenB_data?.decimals)}
               </p>
             )}
           </div>
@@ -495,9 +578,20 @@ const Swap = () => {
             </div>
 
             <div className="mt-1 flex justify-between items-center">
-              <p className="">
-                {tokenA_data?.symbol} <span>&#8674;</span> {tokenB_data?.symbol}
-              </p>
+              {routeContent ? (
+                <p>
+                  Route : {tokenA_data?.symbol}
+                  {routeContent.map((content, i) =>
+                    i !== routeContent.length ? (
+                      <span key={i}> &#8674; {content.symbol}</span>
+                    ) : (
+                      <span key={i}> {content.symbol}</span>
+                    )
+                  )}
+                </p>
+              ) : (
+                <p>No route available</p>
+              )}
               <p className="text-slate-300 text-sm">Deadline : 10m</p>
             </div>
           </>
@@ -506,36 +600,49 @@ const Swap = () => {
         <button
           type="submit"
           disabled={
+            !isAmountOutFetched ||
             isSwitchingChain ||
             isApprove ||
             isSwapping ||
+            isSwappingFTM ||
+            isSwappingTokens ||
             isFetching ||
-            (balanceOf?.[0] &&
+            /// In case of FTM
+            (activeToken.tokenA === WFTM && // @ts-ignore
+              balanceOfFTM?.value < parseEther(tokenInput.tokenA as "0")) ||
+            /// In case of ERC20
+            (activeToken.tokenA !== WFTM &&
               // @ts-ignore
               balanceOf[0].result <
                 // @ts-ignore
-                parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals)) ||
-            !isAmountOutFetched
+                parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals))
           }
           className="btn w-full h-16 mt-10"
         >
           {isSwitchingChain
             ? "Switching Chain..."
-            : isSwapping
+            : isSwapping || isSwappingFTM || isSwappingTokens
             ? "Swapping..."
             : isFetching
             ? "Waiting for receipt..."
             : isApprove
             ? "Approving..."
-            : pairAddress === NULL_ADDRESS
+            : !activeToken.tokenB
+            ? "Select token"
+            : !pairAddressA || (pairAddressA && pairAddressA === NULL_ADDRESS)
             ? "No Pair Available"
             : connectedChain?.id != ACTIVE_CHAIN.id && isConnected
             ? "Switch to FTM"
-            : balanceOf?.[0] &&
-              // @ts-ignore
-              balanceOf[0].result <
+            : /// In case of FTM
+            (activeToken.tokenA === WFTM && // @ts-ignore
+                balanceOfFTM?.value < parseEther(tokenInput.tokenA as "0")) ||
+              /// In case of ERC20
+              (activeToken.tokenA !== WFTM &&
+                isBalanceFetched &&
                 // @ts-ignore
-                parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals)
+                balanceOf[0].result <
+                  // @ts-ignore
+                  parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals))
             ? "Insufficient Balance"
             : tokenA_data?.totalSupply.value &&
               // @ts-ignore

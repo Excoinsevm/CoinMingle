@@ -278,7 +278,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
 
   return (
     <div
-      className="w-full min-h-32 p-4 py-8 flex flex-col gap-5 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl transition-all hover:border hover:border-slate-300 cursor-pointer"
+      className="w-full min-h-32 py-8 flex flex-col gap-5 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl transition-all hover:border hover:border-slate-300 cursor-pointer"
       onClick={toggle}
     >
       <div className="flex justify-around items-center">
@@ -309,31 +309,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
             {Number(amounts.tokenA).toLocaleString()}{" "}
             {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </h1>
-          {
-            // @ts-ignore
-            typeof reservesAmounts && reservesFetched && (
-              <p className="text-sm text-slate-300">
-                Reserve :{" "}
-                {reservesFetched &&
-                  formatToken(
-                    // @ts-ignore
-                    tokenARead === tokens.tokenA
-                      ? // @ts-ignore
-                        reservesAmounts[0] || 0
-                      : // @ts-ignore
-                        reservesAmounts[1] || 0,
-                    tokenA_data?.decimals
-                  )}
-              </p>
-            )
-          }
-        </div>
-        <div className="">
-          <h1 className="text-lg">
-            {Number(amounts.tokenB).toLocaleString()}{" "}
-            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
-          </h1>
-          {typeof reservesAmounts && reservesFetched && (
+          {typeof reservesAmounts !== "undefined" && reservesFetched && (
             <p className="text-sm text-slate-300">
               Reserve :{" "}
               {reservesFetched &&
@@ -341,9 +317,30 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
                   // @ts-ignore
                   tokenARead === tokens.tokenA
                     ? // @ts-ignore
-                      reservesAmounts[1] || 0
+                      reservesAmounts[0]
                     : // @ts-ignore
-                      reservesAmounts[0] || 0,
+                      reservesAmounts[1],
+                  tokenA_data?.decimals
+                )}
+            </p>
+          )}
+        </div>
+        <div className="">
+          <h1 className="text-lg">
+            {Number(amounts.tokenB).toLocaleString()}{" "}
+            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+          </h1>
+          {typeof reservesAmounts !== "undefined" && reservesFetched && (
+            <p className="text-sm text-slate-300">
+              Reserve :{" "}
+              {reservesFetched &&
+                formatToken(
+                  // @ts-ignore
+                  tokenARead === tokens.tokenA
+                    ? // @ts-ignore
+                      reservesAmounts[1]
+                    : // @ts-ignore
+                      reservesAmounts[0],
                   tokenB_data?.decimals
                 )}
             </p>

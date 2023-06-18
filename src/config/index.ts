@@ -16,8 +16,10 @@ export const WFTM = "0x812666209b90344ec8e528375298ab9045c2bd08";
 export const WALLETCONNECT_VERSION = 1;
 export const PROJECT_ID = process.env.PROJECT_ID as string;
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
-export const POOL_PATH = "http://localhost:3000/pool";
-export const DB_PATH = "./src/db/liquidity.json";
+export const POOL_PATH = "http://localhost:3000/api/pool";
+export const DB_LIQUIDITY_PATH = "./src/db/liquidity.json";
+export const DB_TOKENS_PATH = "./src/db/tokens.json";
+export const DB_PAIRS_PATH = "./src/db/pairs.json";
 
 /// Walletconnect theme
 export const themeVariables = {
