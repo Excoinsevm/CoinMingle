@@ -254,7 +254,6 @@ const Swap = () => {
           const { path, content } = await getRoutePath(activeToken);
           setRoutePath(path);
           setRouteContent(content);
-          console.log(path, content);
         } catch (e: any) {
           setRoutePath(undefined);
           setRouteContent(undefined);
