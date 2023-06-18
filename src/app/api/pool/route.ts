@@ -52,7 +52,7 @@ const getPath = (swap: IPoolPost) => {
     }
 
     while (true) {
-      if (count == 1 && path.length == 1) {
+      if (count >= 1 && path.length === 1) {
         return {
           path: [],
           content: [],
@@ -64,11 +64,23 @@ const getPath = (swap: IPoolPost) => {
           return { path, content };
 
         if (pair.tokenA.address === path[path.length - 1]) {
-          path.push(pair.tokenB.address);
-          content.push(pair.tokenB);
+          const filtered = path.find((p) => p === pair.tokenB.address);
+          if (filtered) {
+            path.pop();
+            content.pop();
+          } else {
+            path.push(pair.tokenB.address);
+            content.push(pair.tokenB);
+          }
         } else if (pair.tokenB.address === path[path.length - 1]) {
-          path.push(pair.tokenA.address);
-          content.push(pair.tokenA);
+          const filtered = path.find((p) => p === pair.tokenA.address);
+          if (filtered) {
+            path.pop();
+            content.pop();
+          } else {
+            path.push(pair.tokenA.address);
+            content.push(pair.tokenA);
+          }
         }
       }
       count++;
