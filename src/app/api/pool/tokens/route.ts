@@ -37,6 +37,11 @@ export const POST = async (req: Request) => {
       (token) => token.address === body.tokenB.address
     );
 
+    if (!tokenA_available && !tokenB_available) {
+      allTokens.push(body.tokenA);
+      allTokens.push(body.tokenB);
+    }
+
     if (!tokenA_available || !tokenB_available) {
       !tokenA_available
         ? allTokens.push(body.tokenA)

@@ -1,6 +1,8 @@
 import { ILPAdded, IPoolPost, IToken, ITokens } from "@types";
 import { POOL_PATH } from "@config";
 
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 /** @dev PAIRS */
 export const getAllPairs = async (): Promise<ITokens[]> => {
   return new Promise(async (resolve, reject) => {

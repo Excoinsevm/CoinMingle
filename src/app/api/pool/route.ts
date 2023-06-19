@@ -1,7 +1,7 @@
 import { DB_PAIRS_PATH, DB_TOKENS_PATH } from "@config";
 import { IPoolPost, IToken, ITokens } from "@types";
 import { NextResponse } from "next/server";
-import { readFileSync } from "fs";
+import { readFileSync, promises as fs } from "fs";
 
 const getPath = (swap: IPoolPost) => {
   let count = 0;
@@ -96,10 +96,10 @@ const getPath = (swap: IPoolPost) => {
 export const GET = async () => {
   try {
     /** @dev Getting all the Pairs available */
-    const pairs: IToken[] = JSON.parse(readFileSync(DB_PAIRS_PATH).toString());
-    return NextResponse.json({
-      pairs,
-    });
+    // const pairs: IToken[] = JSON.parse(readFileSync(DB_PAIRS_PATH).toString());
+
+    const pairs = JSON.parse((await fs.readFile(DB_PAIRS_PATH)).toString());
+    return NextResponse.json(pairs);
   } catch (e) {
     return NextResponse.json({});
   }
