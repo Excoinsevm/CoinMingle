@@ -6,7 +6,7 @@ import { DB_PAIRS_PATH, DB_TOKENS_PATH, WFTM } from "@config";
 export const GET = async () => {
   try {
     const tokens: IToken[] = JSON.parse(
-      readFileSync("./src/db/tokens.json").toString()
+      readFileSync(DB_TOKENS_PATH).toString()
     );
     tokens.push({
       name: "FTM",
