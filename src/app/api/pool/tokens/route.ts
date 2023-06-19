@@ -1,82 +1,78 @@
-import { NextResponse } from "next/server";
-import { readFileSync, writeFileSync } from "fs";
-import { IToken, ITokens } from "@types";
-import { DB_PAIRS_PATH, DB_TOKENS_PATH, WFTM } from "@config";
+import { connectToDB } from "@utils/dbConnect";
+import { ITokens } from "@types";
+import { WFTM } from "@config";
+import { Token } from "@models/Token";
+import { Pair } from "@models/Pair";
 
 export const GET = async () => {
   try {
-    const tokens: IToken[] = JSON.parse(
-      readFileSync(DB_TOKENS_PATH).toString()
-    );
+    await connectToDB();
+
+    /** @dev Getting all the tokens */
+    const tokens = await Token.find({});
+    //@ts-ignore
     tokens.push({
       name: "FTM",
       symbol: "FTM",
       address: WFTM,
     });
-    return NextResponse.json({
-      tokens,
-    });
+    return new Response(JSON.stringify({ tokens }), { status: 200 });
   } catch (e) {
-    return NextResponse.json({});
+    return new Response("Internal Server Error", { status: 500 });
   }
 };
 
 export const POST = async (req: Request) => {
   const body: ITokens = await req.json();
 
-  /** @dev Updating tokens */
   try {
-    const allTokens: IToken[] = JSON.parse(
-      readFileSync(DB_TOKENS_PATH).toString()
-    );
+    await connectToDB();
 
-    const tokenA_available = allTokens.find(
-      (token) => token.address === body.tokenA.address
-    );
-    const tokenB_available = allTokens.find(
-      (token) => token.address === body.tokenB.address
-    );
-
-    if (!tokenA_available && !tokenB_available) {
-      allTokens.push(body.tokenA);
-      allTokens.push(body.tokenB);
-    }
-
-    if (!tokenA_available || !tokenB_available) {
-      !tokenA_available
-        ? allTokens.push(body.tokenA)
-        : allTokens.push(body.tokenB);
-
-      writeFileSync(DB_TOKENS_PATH, JSON.stringify(allTokens, null, "\t"));
-    }
-  } catch (e) {
-    const data: IToken[] = [body.tokenA, body.tokenB];
-    writeFileSync(DB_TOKENS_PATH, JSON.stringify(data, null, "\t"));
-  }
-
-  /** @dev Updating pairs */
-  try {
-    const allPairs: ITokens[] = JSON.parse(
-      readFileSync(DB_PAIRS_PATH).toString()
-    );
-
-    const pairAvailable = allPairs.find((pair) => {
-      return (
-        (body.tokenA.address === pair.tokenA.address ||
-          body.tokenA.address === pair.tokenB.address) &&
-        (body.tokenB.address === pair.tokenA.address ||
-          body.tokenB.address === pair.tokenB.address)
-      );
+    /** @dev Updating tokens */
+    const tokenA_available = await Token.findOne({
+      address: body.tokenA.address,
+    });
+    const tokenB_available = await Token.findOne({
+      address: body.tokenB.address,
     });
 
-    if (!pairAvailable) {
-      allPairs.push(body);
-      writeFileSync(DB_PAIRS_PATH, JSON.stringify(allPairs, null, "\t"));
+    /** @dev If both tokens not available then add both tokens */
+    if (!tokenA_available && !tokenB_available) {
+      const newTokenA = new Token(body.tokenA);
+      const newTokenB = new Token(body.tokenB);
+      await newTokenA.save();
+      await newTokenB.save();
     }
-  } catch (e) {
-    const data: ITokens[] = [body];
-    writeFileSync(DB_PAIRS_PATH, JSON.stringify(data, null, "\t"));
-  }
 
-  return NextResponse.json({});
+    /** @dev If one token not available then add that token */
+    if (!tokenA_available || !tokenB_available) {
+      if (!tokenA_available) {
+        const newTokenA = new Token(body.tokenA);
+        await newTokenA.save();
+      } else {
+        const newTokenB = new Token(body.tokenB);
+        await newTokenB.save();
+      }
+    }
+
+    /** @dev Updating pairs */
+    const pairAvailable = await Pair.findOne({
+      tokenA: body.tokenA,
+      tokenB: body.tokenB,
+    });
+    const pairReverseAvailable = await Pair.findOne({
+      tokenA: body.tokenB,
+      tokenB: body.tokenA,
+    });
+
+    /** @dev If pair not available */
+    if (!pairAvailable && !pairReverseAvailable) {
+      const newPair = new Pair(body);
+      await newPair.save();
+    }
+
+    return new Response("Success", { status: 200 });
+  } catch (e) {
+    return new Response("Internal Server Error", { status: 500 });
+  }
 };

@@ -5,7 +5,7 @@ import { BiDownArrow } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
 import CM_ROUTER from "@abis/Router.json";
 import CM_LP from "@abis/LP.json";
-import { IToken } from "@types";
+import { ILiquidities, IToken } from "@types";
 import {
   WFTM,
   ACTIVE_CHAIN,
@@ -34,12 +34,12 @@ import {
   updateTokens,
   updateUserPosition,
 } from "@db";
-import { ILPAdded, ITokens } from "@types";
+import { ILiquidity, ITokens } from "@types";
 import LPView from "@components/client/LPView";
 
 const Liquidity = () => {
   const [allTokens, setAllTokens] = useState<IToken[]>([]);
-  const [allPositions, setAllPositions] = useState<ILPAdded[]>([]);
+  const [allPositions, setAllPositions] = useState<ILiquidities>();
   const [activeAdd, setActiveAdd] = useState(false);
   const [pairAvailable, setPairAvailable] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -460,14 +460,14 @@ const Liquidity = () => {
           symbol: tokenB_data?.symbol!,
         },
       };
-      const newPosition: ILPAdded = {
+      const newPosition: ILiquidity = {
         tokens: {
           tokenA: activeToken.tokenA!,
           tokenB: activeToken.tokenB!,
         },
         amounts: {
-          tokenA: tokenInput.tokenA,
-          tokenB: tokenInput.tokenB,
+          tokenA: Number(tokenInput.tokenA),
+          tokenB: Number(tokenInput.tokenB),
         },
       };
       await updateUserPosition(address as "0x", newPosition);
@@ -733,8 +733,8 @@ const Liquidity = () => {
         </div>
       ) : (
         <div className="h-[35rem] overflow-y-scroll flex flex-col items-center gap-7">
-          {allPositions.length > 0 ? (
-            allPositions.map((position, i) => (
+          {allPositions ? (
+            allPositions.liquidities.map((position, i) => (
               <LPView
                 key={i}
                 tokens={position.tokens}

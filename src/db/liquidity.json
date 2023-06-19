@@ -6,8 +6,8 @@
         "tokenB": "0xC02C2EB530D6349F267BC9e6C7077603874131B2"
       },
       "amounts": {
-        "tokenA": "10211.4048",
-        "tokenB": "50800"
+        "tokenA": 10211.4048,
+        "tokenB": 50800
       }
     },
     {
@@ -16,8 +16,8 @@
         "tokenB": "0xa79465a58A098E17a44AB2E651371c8c8Cb47189"
       },
       "amounts": {
-        "tokenA": "11303.117734",
-        "tokenB": "112000"
+        "tokenA": 11303.117734,
+        "tokenB": 112000
       }
     },
     {
@@ -26,8 +26,8 @@
         "tokenB": "0xc14826134e21a51FC6eD47e56C58259467CEAa5B"
       },
       "amounts": {
-        "tokenA": "47200",
-        "tokenB": "9440"
+        "tokenA": 47200,
+        "tokenB": 9440
       }
     }
   ]

@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { readFileSync, writeFileSync } from "fs";
-import { IDB, ILPAdded } from "@types";
-import { DB_LIQUIDITY_PATH } from "@config";
+import { NextRequest } from "next/server";
+import { ILiquidity } from "@types";
+import { isAddress } from "viem";
+import { Liquidity } from "@models/Liquidity";
+import { connectToDB } from "@utils/dbConnect";
 
 interface IContext {
   params: {
@@ -9,87 +10,65 @@ interface IContext {
   };
 }
 export const GET = async (_: NextRequest, context: IContext) => {
+  if (!isAddress(context.params.address)) {
+    return new Response("Invalid Address", { status: 404 });
+  }
+
   try {
-    const DB: IDB = JSON.parse(readFileSync(DB_LIQUIDITY_PATH).toString());
-    const positions = DB[context.params.address];
-    return NextResponse.json({
-      positions,
+    await connectToDB();
+
+    /** @dev Getting all the Positions of the user */
+    const positions = await Liquidity.findOne({
+      address: context.params.address,
     });
+
+    return new Response(
+      JSON.stringify({
+        positions,
+      }),
+      { status: 200 }
+    );
   } catch (e) {
-    return NextResponse.json({});
+    return new Response("Internal Server Error", { status: 500 });
   }
 };
 
 export const POST = async (req: Request, context: IContext) => {
-  const body: ILPAdded = await req.json();
+  if (!isAddress(context.params.address)) {
+    return new Response("Invalid Address", { status: 404 });
+  }
+
+  const body: ILiquidity = await req.json();
+
   try {
-    const DB: IDB = JSON.parse(readFileSync(DB_LIQUIDITY_PATH).toString());
-    let userPositions = DB[context.params.address];
-    if (userPositions) {
-      let alreadyHave = userPositions.find((tx) => {
-        return (
-          (tx.tokens.tokenA === body.tokens.tokenA ||
-            tx.tokens.tokenA === body.tokens.tokenB) &&
-          (tx.tokens.tokenB === body.tokens.tokenA ||
-            tx.tokens.tokenB === body.tokens.tokenB)
-        );
+    await connectToDB();
+
+    /** @dev Checking if user present */
+    const provider = await Liquidity.findOne({
+      address: context.params.address,
+    });
+
+    /** @dev If not present */
+    if (!provider) {
+      const provider = new Liquidity({
+        address: context.params.address,
+        liquidities: [body],
       });
-
-      if (alreadyHave) {
-        const index = userPositions.findIndex((tx) => {
-          return (
-            (tx.tokens.tokenA === body.tokens.tokenA ||
-              tx.tokens.tokenA === body.tokens.tokenB) &&
-            (tx.tokens.tokenB === body.tokens.tokenA ||
-              tx.tokens.tokenB === body.tokens.tokenB)
-          );
-        });
-
-        alreadyHave = {
-          ...alreadyHave,
-          amounts: {
-            tokenA:
-              alreadyHave.tokens.tokenA === body.tokens.tokenA
-                ? (
-                    Number(alreadyHave.amounts.tokenA) +
-                    Number(body.amounts.tokenA)
-                  ).toString()
-                : (
-                    Number(alreadyHave.amounts.tokenA) +
-                    Number(body.amounts.tokenB)
-                  ).toString(),
-            tokenB:
-              alreadyHave.tokens.tokenB === body.tokens.tokenB
-                ? (
-                    Number(alreadyHave.amounts.tokenB) +
-                    Number(body.amounts.tokenB)
-                  ).toString()
-                : (
-                    Number(alreadyHave.amounts.tokenB) +
-                    Number(body.amounts.tokenA)
-                  ).toString(),
-          },
-        };
-
-        userPositions[index] = alreadyHave;
-      } else {
-        userPositions.push(body);
-      }
+      await provider.save();
     } else {
-      userPositions = [body];
+      /** @dev If provider present */
+      await Liquidity.findOneAndUpdate(
+        { address: context.params.address },
+        {
+          $push: {
+            liquidities: body,
+          },
+        }
+      );
     }
 
-    const data: IDB = {
-      ...DB,
-      [context.params.address]: userPositions,
-    };
-    writeFileSync(DB_LIQUIDITY_PATH, JSON.stringify(data, null, "\t"));
-    return NextResponse.json({});
+    return new Response("Success", { status: 201 });
   } catch (e) {
-    const data: IDB = {
-      [context.params.address]: [body],
-    };
-    writeFileSync(DB_LIQUIDITY_PATH, JSON.stringify(data, null, "\t"));
-    return NextResponse.json({});
+    return new Response("Internal Server Error", { status: 500 });
   }
 };

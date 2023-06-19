@@ -10,18 +10,16 @@ import { BsBoxArrowUpRight } from "react-icons/bs";
 import Link from "next/link";
 
 const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
-  const { isConnected } = useAccount();
   /** @dev Read tokenA data */
   const { data: tokenA_data } = useToken({
     address: tokenA.address as `0x`,
     chainId: ACTIVE_CHAIN.id,
-    enabled: isConnected,
   });
+
   /** @dev Read tokenB data */
   const { data: tokenB_data } = useToken({
     address: tokenB.address as `0x`,
     chainId: ACTIVE_CHAIN.id,
-    enabled: isConnected,
   });
 
   /** @dev Getting the pair address */
@@ -30,7 +28,6 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
     abi: CM_ROUTER.abi,
     functionName: "getPair",
     args: [tokenA.address, tokenB.address],
-    enabled: isConnected,
   });
 
   /** @dev Getting Per token Out */
@@ -42,7 +39,6 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
       parseToken("1", tokenA_data?.decimals),
       [tokenA.address, tokenB.address],
     ],
-    enabled: isConnected,
     watch: true,
   });
 
@@ -53,7 +49,7 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
       abi: CM_LP.abi,
       functionName: "getReserves",
       watch: true,
-      enabled: isConnected && pairAddress ? true : false,
+      enabled: pairAddress ? true : false,
     }
   );
 
@@ -73,7 +69,7 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
         </div>
         <p className="text-md mt-1 text-slate-300">
           Rate :{" "}
-          {isPerTokenFetched
+          {isPerTokenFetched && tokenA_data && tokenB_data
             ? parseFloat(
                 formatToken(
                   perTokenOut as BigInt,

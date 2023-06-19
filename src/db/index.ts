@@ -1,4 +1,4 @@
-import { ILPAdded, IPoolPost, IToken, ITokens } from "@types";
+import { ILiquidities, ILiquidity, IPoolPost, IToken, ITokens } from "@types";
 import { POOL_PATH } from "@config";
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -82,7 +82,7 @@ export const updateTokens = async (tokens: ITokens) => {
 /** @dev LIQUIDITY */
 export const getUserPositions = async (
   address?: string
-): Promise<ILPAdded[]> => {
+): Promise<ILiquidities> => {
   return new Promise(async (resolve, reject) => {
     if (!address) reject("No Address Available");
 
@@ -98,7 +98,7 @@ export const getUserPositions = async (
 
 export const updateUserPosition = async (
   address: string,
-  newPosition: ILPAdded
+  newPosition: ILiquidity
 ) => {
   return new Promise(async (resolve, reject) => {
     try {

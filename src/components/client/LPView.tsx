@@ -24,8 +24,8 @@ interface ILPViewProps {
     tokenB: string;
   };
   amounts: {
-    tokenA: string;
-    tokenB: string;
+    tokenA: number;
+    tokenB: number;
   };
 }
 

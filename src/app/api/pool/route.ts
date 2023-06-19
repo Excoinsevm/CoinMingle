@@ -1,28 +1,29 @@
-import { DB_PAIRS_PATH, DB_TOKENS_PATH } from "@config";
-import { IPoolPost, IToken, ITokens } from "@types";
+import { DB_PAIRS_PATH } from "@config";
+import { IPoolPost, ITokens } from "@types";
 import { NextResponse } from "next/server";
 import { readFileSync, promises as fs } from "fs";
+import { Pair } from "@models/Pair";
+import { connectToDB } from "@utils/dbConnect";
+import { Token } from "@models/Token";
 
-const getPath = (swap: IPoolPost) => {
+const getPath = async (swap: IPoolPost) => {
   let count = 0;
   const path = [swap.tokenA];
   const content = [];
 
   try {
-    /** @dev If Token not available */
-    const tokens: IToken[] = JSON.parse(
-      readFileSync(DB_TOKENS_PATH).toString()
-    );
+    await connectToDB();
 
-    const isTokenA_available = tokens.find((pool) => {
-      return swap.tokenA === pool.address;
+    /** @dev Updating tokens */
+    const tokenA_available = await Token.findOne({
+      address: swap.tokenA,
+    });
+    const tokenB_available = await Token.findOne({
+      address: swap.tokenB,
     });
 
-    const tokenB_Available = tokens.find((pool) => {
-      return swap.tokenB === pool.address;
-    });
-
-    if (!isTokenA_available || !tokenB_Available) {
+    /** @dev If both tokens not available then add both tokens */
+    if (!tokenA_available && !tokenB_available) {
       return {
         path: [],
         content: [],
@@ -96,10 +97,8 @@ const getPath = (swap: IPoolPost) => {
 export const GET = async () => {
   try {
     /** @dev Getting all the Pairs available */
-    // const pairs: IToken[] = JSON.parse(readFileSync(DB_PAIRS_PATH).toString());
-
-    const pairs = JSON.parse((await fs.readFile(DB_PAIRS_PATH)).toString());
-    return NextResponse.json(pairs);
+    const pairs = await Pair.find({});
+    return new Response(JSON.stringify({ pairs }), { status: 200 });
   } catch (e) {
     return NextResponse.json({});
   }
@@ -107,7 +106,7 @@ export const GET = async () => {
 
 export const POST = async (req: Request) => {
   const body: IPoolPost = await req.json();
-  const path = getPath(body);
+  const path = await getPath(body);
   return NextResponse.json({
     ...path,
   });

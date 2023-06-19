@@ -1,16 +1,17 @@
-export interface ILPAdded {
+export interface ILiquidity {
   tokens: {
     tokenA: string;
     tokenB: string;
   };
   amounts: {
-    tokenA: string;
-    tokenB: string;
+    tokenA: number;
+    tokenB: number;
   };
 }
 
-export interface IDB {
-  [address: string]: ILPAdded[];
+export interface ILiquidities {
+  address: string;
+  liquidities: ILiquidity[];
 }
 
 export interface IToken {
