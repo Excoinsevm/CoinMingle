@@ -73,6 +73,7 @@ export const POST = async (req: Request) => {
 
     return new Response("Success", { status: 200 });
   } catch (e) {
+    console.log(e);
     return new Response("Internal Server Error", { status: 500 });
   }
 };
