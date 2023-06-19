@@ -71,11 +71,15 @@ const Liquidity = () => {
   const { address, isConnected } = useAccount();
   useEffect(() => {
     (async () => {
-      try {
-        const positions = await getUserPositions(address);
-        setAllPositions(() => positions);
-      } catch (e: any) {
-        toast.error(e);
+      if (address) {
+        try {
+          const positions = await getUserPositions(address);
+          setAllPositions(() => positions);
+        } catch (e: any) {
+          toast.error(e);
+        }
+      } else {
+        toast.error("Connect your wallet");
       }
     })();
   }, [address, activeAdd == false]);
@@ -491,39 +495,36 @@ const Liquidity = () => {
 
   return (
     <div className="flex flex-col justify-evenly w-[90%] lg:w-[60%]">
-      <header className="text-center flex flex-col gap-4 items-center">
-        <h1 className="text-2xl font-medium">Pool</h1>
-        <p className="text-md text-slate-300 max-w-xl">
-          Add liquidity to the pool by depositing an equal value of both tokens.
-          This action enhances the liquidity and depth of the pool, resulting in
-          efficient token swaps for others.
-        </p>
+      <header className="text-center flex flex-col gap-3 items-center">
+        <h1 className="text-xl font-medium">Pool</h1>
       </header>
 
-      <div className="flex justify-evenly items-center pt-16 pb-14">
+      <div className="flex justify-evenly items-center pt-6 pb-10">
         <p
           onClick={() => setActiveAdd(false)}
-          className={`${!activeAdd && "underline"} cursor-pointer`}
+          className={`${!activeAdd && "underline"} cursor-pointer text-sm`}
         >
           My Positions
         </p>
         <p
           onClick={() => setActiveAdd(true)}
-          className={`${activeAdd && "underline"} cursor-pointer`}
+          className={`${activeAdd && "underline"} cursor-pointer text-sm`}
         >
           Add Liquidity
         </p>
       </div>
 
       {activeAdd ? (
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-5">
           <form className="md:w-3/4 flex flex-col gap-5" onSubmit={onSubmit}>
-            <h1>Deposit Amounts</h1>
+            <h1 className="text-sm">Deposit Amounts</h1>
 
             <div
               className={`border transition-all ${
-                isFetchingAmountIn ? "bg-slate-600 border-red-500" : "bg-white"
-              } bg-opacity-10 backdrop-blur-xl rounded-3xl flex flex-col gap-3 items-center justify-center h-32 px-4`}
+                isFetchingAmountIn
+                  ? "bg-slate-600 border-red-500"
+                  : "bg-slate-900"
+              } bg-opacity-5 backdrop-blur-xl rounded-xl flex flex-col gap-3 items-center justify-center h-28 px-4`}
             >
               <div className="flex gap-3 items-center justify-center">
                 <input
@@ -532,17 +533,17 @@ const Liquidity = () => {
                   name="tokenA"
                   onChange={onChange}
                   value={tokenInput.tokenA}
-                  className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
+                  className="w-full h-12 px-4 bg-transparent outline-none text-2xl"
                   required
                   autoFocus
                 />
                 <div
-                  className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
+                  className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-xl"
                   onClick={() => open(true)}
                 >
-                  <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+                  <Image src="/ftm-logo.svg" alt="" width={20} height={20} />
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-semibold">
+                    <p className="font-semibold text-sm">
                       {activeToken.tokenA === WFTM
                         ? "FTM"
                         : tokenA_data?.symbol}
@@ -552,7 +553,7 @@ const Liquidity = () => {
                 </div>
               </div>
 
-              <div className="flex w-full justify-between items-center px-4 mt-1">
+              <div className="flex w-full justify-between items-center px-4">
                 <div></div>
                 <p className="text-sm text-slate-300">
                   Balance :{" "}
@@ -564,8 +565,10 @@ const Liquidity = () => {
             </div>
             <div
               className={`border transition-all ${
-                isFetchingAmountIn ? "bg-slate-600 border-red-500" : "bg-white"
-              } bg-opacity-10 backdrop-blur-xl rounded-3xl flex flex-col gap-3 items-center justify-center h-32 px-4`}
+                isFetchingAmountIn
+                  ? "bg-slate-600 border-red-500"
+                  : "bg-slate-900"
+              } bg-opacity-5 backdrop-blur-xl rounded-xl flex flex-col gap-3 items-center justify-center h-28 px-4`}
             >
               <div className="flex gap-3 items-center justify-center">
                 {pairAddress !== NULL_ADDRESS ? (
@@ -574,7 +577,7 @@ const Liquidity = () => {
                     placeholder="0"
                     readOnly
                     value={tokenInput.tokenB}
-                    className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
+                    className="w-full h-12 px-4 bg-transparent outline-none text-2xl"
                   />
                 ) : (
                   <input
@@ -583,16 +586,16 @@ const Liquidity = () => {
                     name="tokenB"
                     onChange={onChange}
                     value={tokenInput.tokenB}
-                    className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
+                    className="w-full h-12 px-4 bg-transparent outline-none text-2xl"
                     required
                     autoFocus
                   />
                 )}
                 <div
-                  className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
+                  className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-xl"
                   onClick={() => open(false)}
                 >
-                  <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+                  <Image src="/ftm-logo.svg" alt="" width={20} height={20} />
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-semibold">
                       {activeToken.tokenB === WFTM
@@ -604,7 +607,7 @@ const Liquidity = () => {
                 </div>
               </div>
 
-              <div className="flex w-full justify-between items-center px-4 mt-1">
+              <div className="flex w-full justify-between items-center px-4">
                 <div></div>
                 <p className="text-sm text-slate-300">
                   Balance :{" "}
@@ -617,8 +620,9 @@ const Liquidity = () => {
 
             <button
               type="submit"
-              className="btn w-full h-16 mt-10"
+              className="btn w-full h-14 mt-10 text-sm"
               disabled={
+                !isConnected ||
                 isSwitchingChain ||
                 isFetching ||
                 isApproveA ||
@@ -627,7 +631,9 @@ const Liquidity = () => {
                 isAddingLiquidityFTM
               }
             >
-              {isSwitchingChain
+              {!isConnected
+                ? "Connect Wallet first"
+                : isSwitchingChain
                 ? "Switching Chain..."
                 : isFetching
                 ? "Waiting for receipt..."
@@ -654,8 +660,8 @@ const Liquidity = () => {
                 : "Provide"}
             </button>
           </form>
-          <div className="w-2/4 md:flex flex-col gap-5 hidden">
-            <h1>Pool Status</h1>
+          <div className="w-2/4 md:flex flex-col gap-5 hidden text-sm">
+            <h1 className="">Pool Status</h1>
 
             <div className="p-4 py-6 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl flex items-center justify-between text-sm text-slate-300">
               <p>Current rate</p>
@@ -682,7 +688,7 @@ const Liquidity = () => {
                 Reserve{" "}
                 {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
               </p>
-              {reservesFetched && (
+              {reservesFetched && typeof reservesAmounts !== "undefined" && (
                 <p>
                   {pairAddress === NULL_ADDRESS
                     ? "0"
@@ -703,7 +709,7 @@ const Liquidity = () => {
                 Reserve{" "}
                 {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </p>
-              {reservesFetched && (
+              {reservesFetched && typeof reservesAmounts !== "undefined" && (
                 <p>
                   {pairAddress === NULL_ADDRESS
                     ? "0"
@@ -720,7 +726,7 @@ const Liquidity = () => {
               )}
             </div>
 
-            <div className="p-4 py-6 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl flex items-center justify-between text-lg font-medium">
+            <div className="flex flex-col items-center gap-2 p-4 py-3 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl">
               <p>
                 {tokenInput.tokenA}{" "}
                 {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
@@ -734,7 +740,7 @@ const Liquidity = () => {
           </div>
         </div>
       ) : (
-        <div className="h-[35rem] overflow-y-scroll flex flex-col items-center gap-7">
+        <div className="h-[35rem] overflow-y-scroll flex flex-col items-center gap-5 hide-scroll">
           {allPositions ? (
             allPositions.liquidities.map((position, i) => (
               <LPView
@@ -753,61 +759,53 @@ const Liquidity = () => {
 
       {openModal && (
         <div
-          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-white bg-opacity-10 backdrop-blur-sm"
+          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm rounded-2xl"
           onClick={() => setOpenModal(false)}
         >
-          <div className="w-[27rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
-            <div className="px-5 py-7 border-b-4 border-white border-opacity-30">
-              <input
-                type="text"
-                placeholder="Paste address"
-                onChange={onAdditionalAddress}
-                className="w-full h-12 px-4 bg-transparent outline-none border rounded-2xl placeholder:text-slate-300"
-                required
-                autoFocus
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-            <div className="overflow-x-scroll h-[85%] flex flex-col gap-5 py-7 px-4">
-              {allTokens.map((token) =>
-                tokenAOpened
-                  ? token.address !== activeToken.tokenB && (
-                      <div
-                        className="cursor-pointer border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
-                        key={token.address}
-                        onClick={() => close(token.address)}
-                      >
-                        <Image
-                          src="/ftm-logo.svg"
-                          alt=""
-                          width={30}
-                          height={30}
-                        />
-                        <div className="">
-                          <p className="text-lg">{token.name}</p>
-                          <p className="text-sm">{token.symbol}</p>
-                        </div>
-                      </div>
-                    )
-                  : token.address !== activeToken.tokenA && (
-                      <div
-                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
-                        key={token.address}
-                        onClick={() => close(token.address)}
-                      >
-                        <Image
-                          src="/ftm-logo.svg"
-                          alt=""
-                          width={30}
-                          height={30}
-                        />
-                        <div className="">
-                          <p className="text-lg">{token.name}</p>
-                          <p className="text-sm">{token.symbol}</p>
-                        </div>
-                      </div>
-                    )
-              )}
+          <div className="w-[18rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
+            <div className="overflow-x-scroll h-[97%] flex justify-center items-center py-2 px-4 hide-scroll">
+              <div className="flex flex-col gap-5 w-full mt-14">
+                {typeof allTokens !== "undefined" &&
+                  allTokens.map((token) =>
+                    tokenAOpened
+                      ? token.address !== activeToken.tokenB && (
+                          <div
+                            className="w-full cursor-pointer border rounded-xl border-slate-100 border-opacity-40 py-2 px-1 flex items-center gap-3 hover:border-green-500 transition-[5s]"
+                            key={token.address}
+                            onClick={() => close(token.address)}
+                          >
+                            <Image
+                              src="/ftm-logo.svg"
+                              alt=""
+                              width={30}
+                              height={30}
+                            />
+                            <div className="text-sm">
+                              <p>{token.name}</p>
+                              <p>{token.symbol}</p>
+                            </div>
+                          </div>
+                        )
+                      : token.address !== activeToken.tokenA && (
+                          <div
+                            className="w-full cursor-pointer border rounded-xl border-slate-100 border-opacity-40 py-2 px-1 flex items-center gap-3 hover:border-green-500 transition-[5s]"
+                            key={token.address}
+                            onClick={() => close(token.address)}
+                          >
+                            <Image
+                              src="/ftm-logo.svg"
+                              alt=""
+                              width={30}
+                              height={30}
+                            />
+                            <div className="text-sm">
+                              <p>{token.name}</p>
+                              <p>{token.symbol}</p>
+                            </div>
+                          </div>
+                        )
+                  )}
+              </div>
             </div>
           </div>
         </div>

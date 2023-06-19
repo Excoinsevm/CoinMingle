@@ -278,110 +278,115 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
 
   return (
     <div
-      className="w-full min-h-32 py-8 flex flex-col gap-5 bg-slate-200 bg-opacity-10 backdrop-blur-xl rounded-xl transition-all hover:border hover:border-slate-300 cursor-pointer"
+      className="w-full min-h-24 py-5 flex flex-col gap-5 bg-slate-900 bg-opacity-5 backdrop-blur-xl rounded-xl transition hover:border hover:border-slate-300 cursor-pointer"
       onClick={toggle}
     >
-      <div className="flex justify-around items-center">
+      <div className="flex justify-between items-center text-white px-5">
         <div className="">
-          <div className="flex gap-1">
+          <div className="flex gap-1 text-md">
             <div className="flex items-center">
               <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
-              <h1 className="text-xl text-bold">
+              <h1 className="text-bold">
                 {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
               </h1>
             </div>
             <p>/</p>
             <div className="flex items-center">
               <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
-              <h1 className="text-xl text-bold">
+              <h1 className="text-bold">
                 {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </h1>
             </div>
           </div>
-          <p className="text-sm text-slate-300">
-            Rate : {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
+          <p className="text-sm mt-1">
+            Rate :{" "}
+            {parseFloat(
+              formatToken(
+                perTokenOut as BigInt,
+                tokenB_data?.decimals
+              )!.toString()
+            ).toFixed(4)}{" "}
             {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}/
             {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </p>
         </div>
         <div className="">
-          <h1 className="text-lg">
+          <h1 className="text-md font-medium">
             {Number(amounts.tokenA).toLocaleString()}{" "}
             {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </h1>
           {typeof reservesAmounts !== "undefined" && reservesFetched && (
-            <p className="text-sm text-slate-300">
+            <p className="text-sm">
               Reserve :{" "}
               {reservesFetched &&
-                formatToken(
-                  // @ts-ignore
-                  tokenARead === tokens.tokenA
-                    ? // @ts-ignore
-                      reservesAmounts[0]
-                    : // @ts-ignore
-                      reservesAmounts[1],
-                  tokenA_data?.decimals
-                )}
+                parseFloat(
+                  formatToken(
+                    // @ts-ignore
+                    tokenARead === tokens.tokenA
+                      ? // @ts-ignore
+                        reservesAmounts[0]
+                      : // @ts-ignore
+                        reservesAmounts[1],
+                    tokenA_data?.decimals
+                  )!.toString()
+                ).toFixed(2)}
             </p>
           )}
         </div>
         <div className="">
-          <h1 className="text-lg">
+          <h1 className="text-md font-medium">
             {Number(amounts.tokenB).toLocaleString()}{" "}
             {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
           </h1>
           {typeof reservesAmounts !== "undefined" && reservesFetched && (
-            <p className="text-sm text-slate-300">
+            <p className="text-sm">
               Reserve :{" "}
               {reservesFetched &&
-                formatToken(
-                  // @ts-ignore
-                  tokenARead === tokens.tokenA
-                    ? // @ts-ignore
-                      reservesAmounts[1]
-                    : // @ts-ignore
-                      reservesAmounts[0],
-                  tokenB_data?.decimals
-                )}
+                parseFloat(
+                  formatToken(
+                    // @ts-ignore
+                    tokenARead === tokens.tokenA
+                      ? // @ts-ignore
+                        reservesAmounts[1]
+                      : // @ts-ignore
+                        reservesAmounts[0],
+                    tokenB_data?.decimals
+                  )!.toString()
+                ).toFixed(2)}
             </p>
           )}
         </div>
       </div>
       {fullView && (
-        <div className="flex gap-10 pt-4 px-6 justify-around items-center border-t border-white border-opacity-30">
+        <div className="text-white text-sm flex gap-10 pt-4 px-6 justify-around items-center border-t border-white border-opacity-30">
           <div className="flex flex-col w-1/2">
-            <p className="text-md text-slate-300">
+            <p className="">
               LP Available :{" "}
               {balanceOfFetched &&
                 //@ts-ignore
                 formatEther(balanceOf).toString()}
             </p>
             <div className="">
-              <h1 className="text-lg underline underline-offset-2 mt-4 mb-3">
+              <h1 className="text-md underline underline-offset-2 mt-4 mb-3">
                 Expected Output
               </h1>
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
-                  <h1 className="text-xl text-bold">
+                  <h1 className="text-md text-bold">
                     {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
                   </h1>
                 </div>
                 <p>
                   {amountsOutFetched &&
+                    typeof amountsOut !== "undefined" &&
                     formatToken(
                       // @ts-ignore
                       tokenARead === tokens.tokenA
                         ? // @ts-ignore
-                          amountsOut
-                          ? // @ts-ignore
-                            amountsOut[0]
-                          : 0
+                          amountsOut[0]
                         : // @ts-ignore
-                        amountsOut
-                        ? // @ts-ignore
-                          amountsOut[1]
-                        : 0,
+                          amountsOut[1],
                       tokenA_data?.decimals
                     )}
                 </p>
@@ -389,30 +394,22 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
-                  <h1 className="text-xl text-bold">
+                  <h1 className="text-md text-bold">
                     {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
                   </h1>
                 </div>
                 <p>
-                  {
-                    //@ts-ignore
-                    amountsOutFetched &&
-                      formatToken(
-                        // @ts-ignore
-                        tokenARead === tokens.tokenA
-                          ? // @ts-ignore
-                            amountsOut
-                            ? // @ts-ignore
-                              amountsOut[1]
-                            : 0
-                          : // @ts-ignore
-                          amountsOut
-                          ? // @ts-ignore
-                            amountsOut[0]
-                          : 0,
-                        tokenB_data?.decimals
-                      )
-                  }
+                  {amountsOutFetched &&
+                    typeof amountsOut !== "undefined" &&
+                    formatToken(
+                      // @ts-ignore
+                      tokenARead === tokens.tokenA
+                        ? // @ts-ignore
+                          amountsOut[1]
+                        : // @ts-ignore
+                          amountsOut[0],
+                      tokenB_data?.decimals
+                    )}
                 </p>
               </div>
             </div>

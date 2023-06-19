@@ -18,5 +18,13 @@ body {
 }
 
 .btn {
-  @apply rounded-xl bg-white disabled:opacity-40 text-black;
+  @apply rounded-lg bg-white disabled:opacity-40 text-black;
+}
+
+.hide-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scroll::-webkit-scrollbar {
+  display: none;
 }

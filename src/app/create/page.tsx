@@ -126,8 +126,8 @@ const CreateERC20 = () => {
   return (
     <div className="flex flex-col h-full justify-center text-center text-white">
       <header>
-        <h1 className="text-2xl font-medium">Create ERC20 Token</h1>
-        <p className="text-md text-slate-300 mt-4 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
+        <h1 className="text-xl font-medium">Create ERC20 Token</h1>
+        <p className="text-sm text-slate-300 mt-2 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
           Create our own ERC20 tokens on the FANTOM network. This feature can be
           valuable for launching new projects or enhancing liquidity by
           introducing new tokens.
@@ -144,10 +144,10 @@ const CreateERC20 = () => {
           )}
         </div>
       </header>
-      <div className="pt-2 p-12 md:w-[85%] lg:w-[75%] md:self-center">
-        <form onSubmit={onSubmit} className="flex flex-col gap-12 text-sm">
+      <div className="pt-2 p-12 md:w-[85%] lg:w-[75%] self-center text-sm">
+        <form onSubmit={onSubmit} className="flex flex-col gap-8">
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#name" className="font-medium text-md">
+            <label htmlFor="#name" className="font-medium">
               Name
             </label>
             <input
@@ -155,7 +155,7 @@ const CreateERC20 = () => {
               placeholder="Coin Mingle"
               id="name"
               name="name"
-              className="w-full h-10 px-4 bg-transparent border-b-2 transition-all focus:border-b-green-500 outline-none"
+              className="w-full h-10 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
               onChange={(e) => onChange(e)}
               value={tokenData.name}
               required
@@ -163,14 +163,14 @@ const CreateERC20 = () => {
           </div>
 
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#symbol" className="font-medium text-md">
+            <label htmlFor="#symbol" className="font-medium">
               Symbol
             </label>
             <input
               type="text"
               id="symbol"
               placeholder="COM"
-              className="w-full h-10 px-4 bg-transparent border-b-2 transition-all focus:border-b-green-500 outline-none"
+              className="w-full h-10 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
               onChange={(e) => onChange(e)}
               name="symbol"
               value={tokenData.symbol}
@@ -178,7 +178,7 @@ const CreateERC20 = () => {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#decimals" className="font-medium text-md">
+            <label htmlFor="#decimals" className="font-medium">
               Decimals
             </label>
             <input
@@ -187,7 +187,7 @@ const CreateERC20 = () => {
               placeholder="18"
               min={1}
               max={18}
-              className="w-full h-10 px-4 bg-transparent border-b-2 transition-all focus:border-b-green-500 outline-none"
+              className="w-full h-10 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
               onChange={(e) => onChange(e)}
               name="decimals"
               value={tokenData.decimals}
@@ -195,7 +195,7 @@ const CreateERC20 = () => {
             />
           </div>
           <div className="flex flex-col justify-center items-start">
-            <label htmlFor="#supply" className="font-medium text-md">
+            <label htmlFor="#supply" className="font-medium">
               Initial Supply
             </label>
             <input
@@ -203,7 +203,7 @@ const CreateERC20 = () => {
               id="supply"
               placeholder="10000"
               min={10000}
-              className="w-full h-10 px-4 bg-transparent border-b-2 transition-all focus:border-b-green-500 outline-none"
+              className="w-full h-10 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
               onChange={(e) => onChange(e)}
               name="supply"
               value={tokenData.supply}
@@ -214,7 +214,7 @@ const CreateERC20 = () => {
             <button
               disabled={isDeploying || isFetching || isSwitchingChain}
               type="submit"
-              className="btn w-64 h-16"
+              className="btn w-64 h-12 text-sm mt-5"
             >
               {isSwitchingChain
                 ? "Switching Chain..."

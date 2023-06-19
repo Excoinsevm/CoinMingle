@@ -14,14 +14,14 @@ const NavBar = () => {
   return (
     <nav className="py-4 flex flex-row items-center justify-between">
       <div className="flex items-center gap-10">
-        <Link href={"/"} className="font-semibold text-white text-xl">
+        <Link href={"/"} className="font-semibold text-white">
           CoinMingle
         </Link>
         <ul className="hidden md:flex items-center gap-6 text-slate-400 font-medium">
           {Links.map((link) => (
             <li
               key={link.name}
-              className={`transition-all duration-500 hover:underline underline-offset-3 hover:text-white ${
+              className={`text-sm transition-all duration-500 hover:underline underline-offset-3 hover:text-white ${
                 currentPage === link.path ? "text-white underline" : ""
               }`}
             >
@@ -34,7 +34,7 @@ const NavBar = () => {
           {Links.map((link) => (
             <li
               key={link.name}
-              className={`transition-all duration-500 hover:underline underline-offset-3 hover:text-black ${
+              className={`text-sm transition-all duration-500 hover:underline underline-offset-3 hover:text-black ${
                 currentPage === link.path ? "text-black underline" : ""
               }`}
             >
@@ -45,7 +45,7 @@ const NavBar = () => {
       </div>
       <div className="flex gap-5 justify-center items-center">
         {!isConnected && (
-          <Image src={"/ftm-logo.svg"} alt="FTM" width={35} height={35} />
+          <Image src={"/ftm-logo.svg"} alt="FTM" width={25} height={25} />
         )}
         <Web3Button balance="show" avatar="hide" icon="hide" label="Connect" />
       </div>

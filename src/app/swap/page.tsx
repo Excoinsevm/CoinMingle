@@ -443,10 +443,10 @@ const Swap = () => {
   };
 
   return (
-    <div className="justify-evenly flex flex-col gap-16">
+    <div className="justify-evenly flex flex-col gap-10">
       <header className="text-center flex flex-col gap-4">
-        <h1 className="text-2xl">Swap</h1>
-        <p className="text-md text-slate-300 max-w-xl text-center">
+        <h1 className="text-xl">Swap</h1>
+        <p className="text-sm text-slate-300 max-w-xl text-center">
           Exchange one token for another directly through the smart contract.
           The swap feature calculates the conversion rate based on the available
           liquidity in the pool.
@@ -455,29 +455,29 @@ const Swap = () => {
 
       <form className="w-[35rem] flex flex-col gap-2" onSubmit={onSubmit}>
         <div
-          className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
-            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-white"
-          } bg-opacity-10 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
+          className={`flex flex-col items-center justify-center gap-2 h-28 px-4 transition-all ${
+            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-slate-100"
+          } bg-opacity-5 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
         >
-          <div className="flex gap-3 items-center justify-center">
+          <div className="flex w-full items-center justify-between">
             <input
               type="text"
               placeholder="0"
               name="tokenA"
               value={tokenInput.tokenA}
               onChange={onChange}
-              disabled={isFetchingAmountOut}
-              className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
+              // disabled={isFetchingAmountOut}
+              className="w-full h-8 px-4 bg-transparent outline-none text-2xl"
               required
               autoFocus
             />
             <div
-              className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
+              className="flex gap-1 justify-center items-center px-5 py-2 cursor-pointer border border-slate-100 rounded-2xl"
               onClick={() => open(true)}
             >
-              <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+              <Image src="/ftm-logo.svg" alt="" width={20} height={20} />
               <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold">
+                <p className="font-semibold text-sm">
                   {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
                 </p>
                 <BiDownArrow />
@@ -486,14 +486,16 @@ const Swap = () => {
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
             <div>
-              {pairAddressA && pairAddressA !== NULL_ADDRESS ? (
+              {pairAddressA &&
+              typeof balanceOf !== "undefined" &&
+              pairAddressA !== NULL_ADDRESS ? (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
                   {formatToken(balanceOf?.[2].result, tokenA_data?.decimals)}
                 </p>
               ) : null}
             </div>
-            {isBalanceFetched && (
+            {isBalanceFetched && typeof balanceOf !== "undefined" && (
               <p className="text-sm text-slate-300">
                 Balance :{" "}
                 {activeToken.tokenA === WFTM
@@ -513,26 +515,26 @@ const Swap = () => {
         </div>
 
         <div
-          className={`flex flex-col items-center justify-center gap-2 h-32 px-4 transition-all ${
-            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-white"
-          } bg-opacity-10 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
+          className={`flex flex-col items-center justify-center gap-2 h-28 px-4 transition-all ${
+            isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-slate-100"
+          } bg-opacity-5 backdrop-blur-3xl rounded-2xl border transition-[5s]`}
         >
-          <div className="flex gap-3 items-center justify-center">
+          <div className="flex w-full gap-3 items-center justify-between">
             <input
               type="text"
               placeholder="0"
               name="tokenB"
               value={tokenInput.tokenB}
               readOnly
-              className="w-full h-12 px-4 bg-transparent outline-none text-4xl"
+              className="w-full h-12 px-4 bg-transparent outline-none text-2xl"
             />
             <div
               className="flex gap-1 justify-center items-center px-7 py-2 cursor-pointer border border-slate-100 rounded-2xl"
               onClick={() => open(false)}
             >
-              <Image src="/ftm-logo.svg" alt="" width={27} height={27} />
+              <Image src="/ftm-logo.svg" alt="" width={20} height={20} />
               <div className="flex items-center justify-between gap-2">
-                <p className="font-semibold">
+                <p className="font-semibold text-sm">
                   {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
                 </p>
                 <BiDownArrow />
@@ -541,14 +543,14 @@ const Swap = () => {
           </div>
           <div className="flex w-full justify-between items-center px-4 mt-1">
             <div>
-              {routePath && (
+              {routePath && typeof balanceOf !== "undefined" && (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
                   {formatToken(balanceOf?.[3].result, tokenB_data?.decimals)}
                 </p>
               )}
             </div>
-            {isBalanceFetched && (
+            {isBalanceFetched && typeof balanceOf !== "undefined" && (
               <p className="text-sm text-slate-300">
                 Balance :{" "}
                 {activeToken.tokenB === WFTM
@@ -576,7 +578,7 @@ const Swap = () => {
               </p>
             </div>
 
-            <div className="mt-1 flex justify-between items-center">
+            <div className="mt-1 text-sm flex justify-between items-center">
               {routeContent ? (
                 <p>
                   Route : {tokenA_data?.symbol}
@@ -599,6 +601,7 @@ const Swap = () => {
         <button
           type="submit"
           disabled={
+            !isConnected ||
             !isAmountOutFetched ||
             isSwitchingChain ||
             isApprove ||
@@ -611,14 +614,17 @@ const Swap = () => {
               balanceOfFTM?.value < parseEther(tokenInput.tokenA as "0")) ||
             /// In case of ERC20
             (activeToken.tokenA !== WFTM &&
+              typeof balanceOf !== "undefined" &&
               // @ts-ignore
               balanceOf[0].result <
                 // @ts-ignore
                 parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals))
           }
-          className="btn w-full h-16 mt-10"
+          className="btn w-full h-14 mt-10 text-sm"
         >
-          {isSwitchingChain
+          {!isConnected
+            ? "Connect Wallet First"
+            : isSwitchingChain
             ? "Switching Chain..."
             : isSwapping || isSwappingFTM || isSwappingTokens
             ? "Swapping..."
@@ -638,6 +644,7 @@ const Swap = () => {
               /// In case of ERC20
               (activeToken.tokenA !== WFTM &&
                 isBalanceFetched &&
+                typeof balanceOf !== "undefined" &&
                 // @ts-ignore
                 balanceOf[0].result <
                   // @ts-ignore
@@ -654,50 +661,52 @@ const Swap = () => {
 
       {openModal && (
         <div
-          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-white bg-opacity-10 backdrop-blur-sm"
+          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm rounded-2xl"
           onClick={() => setOpenModal(false)}
         >
-          <div className="w-[27rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
-            <div className="overflow-x-scroll h-[85%] flex flex-col gap-5 py-7 px-4">
-              {allTokens.map((token) =>
-                tokenAOpened
-                  ? token.address !== activeToken.tokenB && (
-                      <div
-                        className="cursor-pointer border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
-                        key={token.address}
-                        onClick={() => close(token.address)}
-                      >
-                        <Image
-                          src="/ftm-logo.svg"
-                          alt=""
-                          width={30}
-                          height={30}
-                        />
-                        <div className="">
-                          <p className="text-lg">{token.name}</p>
-                          <p className="text-sm">{token.symbol}</p>
+          <div className="w-[18rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
+            <div className="overflow-x-scroll h-[97%] flex justify-center items-center py-2 px-4 hide-scroll">
+              <div className="flex flex-col gap-5 w-full mt-14">
+                {allTokens.map((token) =>
+                  tokenAOpened
+                    ? token.address !== activeToken.tokenB && (
+                        <div
+                          className="w-full cursor-pointer border rounded-xl border-slate-100 border-opacity-40 py-2 px-1 flex items-center gap-3 hover:border-green-500 transition-[5s]"
+                          key={token.address}
+                          onClick={() => close(token.address)}
+                        >
+                          <Image
+                            src="/ftm-logo.svg"
+                            alt=""
+                            width={30}
+                            height={30}
+                          />
+                          <div className="text-sm">
+                            <p>{token.name}</p>
+                            <p>{token.symbol}</p>
+                          </div>
                         </div>
-                      </div>
-                    )
-                  : token.address !== activeToken.tokenA && (
-                      <div
-                        className="border rounded-3xl border-slate-100 border-opacity-40 py-2 px-5 flex items-center gap-3 hover:border-green-500 transition-[5s]"
-                        key={token.address}
-                        onClick={() => close(token.address)}
-                      >
-                        <Image
-                          src="/ftm-logo.svg"
-                          alt=""
-                          width={30}
-                          height={30}
-                        />
-                        <div className="">
-                          <p className="text-lg">{token.name}</p>
-                          <p className="text-sm">{token.symbol}</p>
+                      )
+                    : token.address !== activeToken.tokenA && (
+                        <div
+                          className="w-full cursor-pointer border rounded-xl border-slate-100 border-opacity-40 py-2 px-1 flex items-center gap-3 hover:border-green-500 transition-[5s]"
+                          key={token.address}
+                          onClick={() => close(token.address)}
+                        >
+                          <Image
+                            src="/ftm-logo.svg"
+                            alt=""
+                            width={30}
+                            height={30}
+                          />
+                          <div className="text-sm">
+                            <p>{token.name}</p>
+                            <p>{token.symbol}</p>
+                          </div>
                         </div>
-                      </div>
-                    )
-              )}
+                      )
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
-import { DB_PAIRS_PATH } from "@config";
-import { IPoolPost, ITokens } from "@types";
+import { IPoolPost } from "@types";
 import { NextResponse } from "next/server";
 import { Pair } from "@models/Pair";
 import { connectToDB } from "@utils/dbConnect";
@@ -94,6 +93,7 @@ const getPath = async (swap: IPoolPost) => {
 
 export const GET = async () => {
   try {
+    await connectToDB();
     /** @dev Getting all the Pairs available */
     const pairs = await Pair.find({});
     return new Response(JSON.stringify({ pairs }), { status: 200 });
