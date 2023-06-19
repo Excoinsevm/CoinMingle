@@ -1,7 +1,6 @@
 import { DB_PAIRS_PATH } from "@config";
 import { IPoolPost, ITokens } from "@types";
 import { NextResponse } from "next/server";
-import { readFileSync, promises as fs } from "fs";
 import { Pair } from "@models/Pair";
 import { connectToDB } from "@utils/dbConnect";
 import { Token } from "@models/Token";
@@ -14,7 +13,7 @@ const getPath = async (swap: IPoolPost) => {
   try {
     await connectToDB();
 
-    /** @dev Updating tokens */
+    /** @dev Checking if token available */
     const tokenA_available = await Token.findOne({
       address: swap.tokenA,
     });
@@ -31,8 +30,7 @@ const getPath = async (swap: IPoolPost) => {
     }
 
     /** @dev Finding path */
-    const pools: ITokens[] = JSON.parse(readFileSync(DB_PAIRS_PATH).toString());
-
+    const pools = await Pair.find({});
     const filtered = pools.find((pool) => {
       return (
         (pool.tokenA.address === swap.tokenA ||

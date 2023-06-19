@@ -53,6 +53,7 @@ export const getAllTokens = async (): Promise<IToken[]> => {
       const data = await response.json();
       resolve(data.tokens);
     } catch (e) {
+      console.log(e);
       reject("Internal Server Error while getting tokens.");
     }
   });
@@ -61,7 +62,7 @@ export const getAllTokens = async (): Promise<IToken[]> => {
 export const updateTokens = async (tokens: ITokens) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`${POOL_PATH}/tokens`, {
+      await fetch(`${POOL_PATH}/tokens`, {
         method: "POST",
         mode: "cors",
         cache: "no-store",
@@ -71,10 +72,9 @@ export const updateTokens = async (tokens: ITokens) => {
         },
         body: JSON.stringify(tokens),
       });
-      await response.json();
       resolve("Successfully Added.");
     } catch (e) {
-      reject("Internal Server Error while getting tokens.");
+      reject("Internal Server Error while updating tokens.");
     }
   });
 };
@@ -102,7 +102,7 @@ export const updateUserPosition = async (
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`${POOL_PATH}/${address}`, {
+      await fetch(`${POOL_PATH}/${address}`, {
         method: "POST",
         mode: "cors",
         cache: "no-store",
@@ -112,7 +112,6 @@ export const updateUserPosition = async (
         },
         body: JSON.stringify(newPosition),
       });
-      await response.json();
       resolve("Successfully Added.");
     } catch (e) {
       reject("Internal Server Error while updating positions");

@@ -42,10 +42,8 @@ export const POST = async (req: Request) => {
       const newTokenB = new Token(body.tokenB);
       await newTokenA.save();
       await newTokenB.save();
-    }
-
-    /** @dev If one token not available then add that token */
-    if (!tokenA_available || !tokenB_available) {
+    } else if (!tokenA_available || !tokenB_available) {
+      /** @dev If one token not available then add that token */
       if (!tokenA_available) {
         const newTokenA = new Token(body.tokenA);
         await newTokenA.save();
@@ -57,12 +55,12 @@ export const POST = async (req: Request) => {
 
     /** @dev Updating pairs */
     const pairAvailable = await Pair.findOne({
-      tokenA: body.tokenA,
-      tokenB: body.tokenB,
+      "tokenA.address": body.tokenA.address,
+      "tokenB.address": body.tokenB.address,
     });
     const pairReverseAvailable = await Pair.findOne({
-      tokenA: body.tokenB,
-      tokenB: body.tokenA,
+      "tokenA.address": body.tokenB.address,
+      "tokenB.address": body.tokenA.address,
     });
 
     /** @dev If pair not available */
@@ -70,10 +68,8 @@ export const POST = async (req: Request) => {
       const newPair = new Pair(body);
       await newPair.save();
     }
-
     return new Response("Success", { status: 200 });
   } catch (e) {
-    console.log(e);
     return new Response("Internal Server Error", { status: 500 });
   }
 };

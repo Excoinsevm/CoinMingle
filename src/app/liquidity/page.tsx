@@ -115,6 +115,7 @@ const Liquidity = () => {
         args: [address as `0x`],
       },
     ],
+    enabled: activeToken.tokenA && activeToken.tokenB ? true : false,
     watch: true,
   });
 
@@ -155,6 +156,7 @@ const Liquidity = () => {
     // @ts-ignore
     abi: CM_LP.abi,
     functionName: "tokenA",
+    enabled: pairAddress ? true : false,
   });
 
   /** @dev Getting Per token Out */
