@@ -89,7 +89,8 @@ export const getUserPositions = async (
     try {
       const response = await fetch(`${POOL_PATH}/${address}`);
       const data = await response.json();
-      resolve(data.positions ? data.positions : []);
+      console.log(data);
+      resolve(data.positions ? data.positions : null);
     } catch (e) {
       reject("Internal Server Error while updating positions");
     }
