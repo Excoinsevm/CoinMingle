@@ -10,11 +10,15 @@ const Market = () => {
 
   useEffect(() => {
     (async () => {
+      const loading = toast.loading("Hold On! We are fetching...");
       try {
         const pairs = await getAllPairs();
         setAllPairs(pairs);
       } catch (e: any) {
         toast.error(e);
+      } finally {
+        toast.dismiss(loading);
+        toast.success("Done");
       }
     })();
   }, []);
