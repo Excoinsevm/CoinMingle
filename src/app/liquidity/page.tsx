@@ -759,12 +759,22 @@ const Liquidity = () => {
 
       {openModal && (
         <div
-          className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm rounded-2xl"
+          className="fixed inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm rounded-2xl"
           onClick={() => setOpenModal(false)}
         >
-          <div className="w-[18rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
-            <div className="overflow-x-scroll h-[97%] flex justify-center items-center py-2 px-4 hide-scroll">
-              <div className="flex flex-col gap-5 w-full mt-14">
+          <div className="w-[23rem] h-[80%] pb-4 bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-xl text-white flex flex-col gap-4">
+            <div className="w-full border-b border-white border-opacity-10 py-6 px-5">
+              <input
+                type="text"
+                placeholder="Paste address"
+                onChange={onAdditionalAddress}
+                className="w-full bg-transparent border rounded-2xl py-3 px-5 outline-none text-sm"
+                onClick={(e) => e.stopPropagation()}
+                autoFocus
+              />
+            </div>
+            <div className="overflow-x-scroll h-[97%] flex px-4 hide-scroll">
+              <div className="flex flex-col gap-5 w-full">
                 {typeof allTokens !== "undefined" &&
                   allTokens.map((token) =>
                     tokenAOpened
