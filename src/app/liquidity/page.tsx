@@ -791,8 +791,12 @@ const Liquidity = () => {
                               height={30}
                             />
                             <div className="text-sm">
-                              <p>{token.name}</p>
-                              <p>{token.symbol}</p>
+                              <p>
+                                {token.address === WFTM ? "FTM" : token.name}
+                              </p>
+                              <p>
+                                {token.address === WFTM ? "FTM" : token.symbol}
+                              </p>
                             </div>
                           </div>
                         )
@@ -809,8 +813,12 @@ const Liquidity = () => {
                               height={30}
                             />
                             <div className="text-sm">
-                              <p>{token.name}</p>
-                              <p>{token.symbol}</p>
+                              <p>
+                                {token.address === WFTM ? "FTM" : token.name}
+                              </p>
+                              <p>
+                                {token.address === WFTM ? "FTM" : token.symbol}
+                              </p>
                             </div>
                           </div>
                         )

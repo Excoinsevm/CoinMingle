@@ -664,7 +664,7 @@ const Swap = () => {
           className="fixed inset-0 w-full max-h-full flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm rounded-2xl"
           onClick={() => setOpenModal(false)}
         >
-          <div className="w-[18rem] h-[70%] bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-3xl text-white flex flex-col gap-4">
+          <div className="w-[18rem] h-[80%] py-4 bg-slate-200 bg-opacity-30 backdrop-blur-xl rounded-xl text-white flex flex-col gap-4">
             <div className="overflow-x-scroll h-[97%] flex justify-center items-center py-2 px-4 hide-scroll">
               <div className="flex flex-col gap-5 w-full mt-14">
                 {allTokens.map((token) =>
@@ -682,8 +682,10 @@ const Swap = () => {
                             height={30}
                           />
                           <div className="text-sm">
-                            <p>{token.name}</p>
-                            <p>{token.symbol}</p>
+                            <p>{token.address === WFTM ? "FTM" : token.name}</p>
+                            <p>
+                              {token.address === WFTM ? "FTM" : token.symbol}
+                            </p>
                           </div>
                         </div>
                       )
@@ -700,8 +702,10 @@ const Swap = () => {
                             height={30}
                           />
                           <div className="text-sm">
-                            <p>{token.name}</p>
-                            <p>{token.symbol}</p>
+                            <p>{token.address === WFTM ? "FTM" : token.name}</p>
+                            <p>
+                              {token.address === WFTM ? "FTM" : token.symbol}
+                            </p>
                           </div>
                         </div>
                       )

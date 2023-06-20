@@ -10,12 +10,15 @@ export const GET = async () => {
 
     /** @dev Getting all the tokens */
     const tokens = await Token.find({});
-    //@ts-ignore
-    tokens.push({
-      name: "FTM",
-      symbol: "FTM",
-      address: WFTM,
-    });
+    const found = tokens.find((token) => token.address === WFTM);
+    if (!found) {
+      //@ts-ignore
+      tokens.push({
+        name: "FTM",
+        symbol: "FTM",
+        address: WFTM,
+      });
+    }
     return new Response(JSON.stringify({ tokens }), { status: 200 });
   } catch (e) {
     return new Response("Internal Server Error", { status: 500 });
