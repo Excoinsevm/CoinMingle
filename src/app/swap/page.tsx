@@ -251,9 +251,9 @@ const Swap = () => {
 
   /** @dev Give approval if not available */
   const {
-    data: approvalDataA,
-    isLoading: isApproveA,
-    writeAsync: giveApprovalA,
+    data: approvalData,
+    isLoading: isApprove,
+    writeAsync: giveApproval,
   } = useContractWrite({
     address: activeToken.tokenA as "0x",
     abi: erc20ABI,
@@ -262,22 +262,6 @@ const Swap = () => {
       CoinMingleRouter,
       // @ts-ignore
       tokenA_data?.totalSupply.value,
-    ],
-  });
-
-  /** @dev Give approval if not available */
-  const {
-    data: approvalDataB,
-    isLoading: isApproveB,
-    writeAsync: giveApprovalB,
-  } = useContractWrite({
-    address: activeToken.tokenB as "0x",
-    abi: erc20ABI,
-    functionName: "approve",
-    args: [
-      CoinMingleRouter,
-      // @ts-ignore
-      tokenB_data?.totalSupply.value,
     ],
   });
 
@@ -346,8 +330,7 @@ const Swap = () => {
       swapHash?.hash ||
       swapFTMForTokensHash?.hash ||
       swapTokensForFTMHash?.hash ||
-      approvalDataA?.hash ||
-      approvalDataB?.hash,
+      approvalData?.hash,
     onSuccess: onReceipt,
     onError,
   });
@@ -411,7 +394,7 @@ const Swap = () => {
     }
 
     /** @dev Taking approvals if not available */
-    if (tokenA_data && tokenB_data && tokenInput.tokenA) {
+    if (tokenA_data && tokenInput.tokenA) {
       if (
         activeToken.tokenA !== WFTM &&
         // @ts-ignore
@@ -419,24 +402,7 @@ const Swap = () => {
       ) {
         const loadingToast = toast.loading("Approving...");
         try {
-          await giveApprovalA();
-          toast.success("Approved");
-        } catch (e: any) {
-          onError(e);
-        } finally {
-          toast.dismiss(loadingToast);
-        }
-        return;
-      }
-
-      if (
-        activeToken.tokenB !== WFTM &&
-        // @ts-ignore
-        approvalB < parseUnits(tokenInput.tokenB as "0", tokenB_data.decimals)
-      ) {
-        const loadingToast = toast.loading("Approving...");
-        try {
-          await giveApprovalB();
+          await giveApproval();
           toast.success("Approved");
         } catch (e: any) {
           onError(e);
@@ -661,8 +627,7 @@ const Swap = () => {
             !isConnected ||
             !isAmountOutFetched ||
             isSwitchingChain ||
-            isApproveA ||
-            isApproveB ||
+            isApprove ||
             isSwapping ||
             isSwappingFTM ||
             isSwappingTokens ||
@@ -688,7 +653,7 @@ const Swap = () => {
             ? "Swapping..."
             : isFetching
             ? "Waiting for receipt..."
-            : isApproveA || isApproveB
+            : isApprove
             ? "Approving..."
             : !activeToken.tokenB
             ? "Select token"
@@ -715,14 +680,6 @@ const Swap = () => {
                 parseUnits(tokenInput.tokenA as "0", tokenA_data.decimals)
             ? `Approve ${
                 activeToken.tokenA === WFTM ? "FTM" : tokenA_data.symbol
-              }`
-            : tokenB_data &&
-              activeToken.tokenB !== WFTM &&
-              // @ts-ignore
-              approvalB <
-                parseUnits(tokenInput.tokenB as "0", tokenB_data.decimals)
-            ? `Approve ${
-                activeToken.tokenB === WFTM ? "FTM" : tokenB_data.symbol
               }`
             : "Swap"}
         </button>
