@@ -9,7 +9,7 @@ import { fantomTestnet } from "wagmi/chains";
 export const chains = [fantomTestnet];
 export const ACTIVE_CHAIN = fantomTestnet;
 export const EXPLORER = "https://testnet.ftmscan.com";
-export const CoinMingleRouter = "0x100175318D8845F68a5D9F311f64334D61189C22";
+export const CoinMingleRouter = "0x079D6fDBA5ee8C9d8304276DFd4cfd890cB5f1Ad";
 export const WFTM = "0x812666209b90344ec8e528375298ab9045c2bd08";
 
 /// OTHER CONFIG
