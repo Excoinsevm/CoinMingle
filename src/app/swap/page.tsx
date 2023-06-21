@@ -443,7 +443,7 @@ const Swap = () => {
   };
 
   return (
-    <div className="justify-evenly flex flex-col gap-10">
+    <div className="w-[90%] items-center flex flex-col gap-10">
       <header className="text-center flex flex-col gap-4">
         <h1 className="text-xl">Swap</h1>
         <p className="text-sm text-slate-300 max-w-xl text-center">
@@ -453,7 +453,10 @@ const Swap = () => {
         </p>
       </header>
 
-      <form className="w-[35rem] flex flex-col gap-2" onSubmit={onSubmit}>
+      <form
+        className="w-full md:w-[35rem] flex justify-center flex-col gap-2"
+        onSubmit={onSubmit}
+      >
         <div
           className={`flex flex-col items-center justify-center gap-2 h-28 px-4 transition-all ${
             isFetchingAmountOut ? "bg-slate-600 border-red-500" : "bg-slate-100"
