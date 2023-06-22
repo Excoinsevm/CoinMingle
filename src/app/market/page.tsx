@@ -10,15 +10,13 @@ const Market = () => {
 
   useEffect(() => {
     (async () => {
-      const loading = toast.loading("Hold On! We are fetching...");
       try {
+        const loading = toast.loading("Hold On! We are fetching...");
         const pairs = await getAllPairs();
         setAllPairs(pairs);
+        toast.dismiss(loading);
       } catch (e: any) {
         toast.error(e);
-      } finally {
-        toast.dismiss(loading);
-        toast.success("Done");
       }
     })();
   }, []);
@@ -37,7 +35,7 @@ const Market = () => {
           </div>
         )}
       </div>
-      <Toaster />
+      <Toaster containerClassName="text-sm" />
     </div>
   );
 };

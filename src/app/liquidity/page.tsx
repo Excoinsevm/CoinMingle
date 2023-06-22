@@ -828,7 +828,7 @@ const Liquidity = () => {
           </div>
         </div>
       )}
-      <Toaster />
+      <Toaster containerClassName="text-sm" />
     </div>
   );
 };

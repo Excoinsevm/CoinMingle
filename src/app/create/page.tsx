@@ -229,7 +229,7 @@ const CreateERC20 = () => {
           </div>
         </form>
       </div>
-      <Toaster />
+      <Toaster containerClassName="text-sm" />
     </div>
   );
 };

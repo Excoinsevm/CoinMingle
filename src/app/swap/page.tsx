@@ -153,15 +153,6 @@ const Swap = () => {
     watch: true,
   });
 
-  const { data: approval } = useContractRead({
-    address: activeToken.tokenA as "0x",
-    abi: erc20ABI,
-    functionName: "allowance",
-    args: [address as "0x", CoinMingleRouter],
-    enabled: isConnected && activeToken.tokenA ? true : false,
-    watch: true,
-  });
-
   const {
     data: amountOut,
     isFetched: isAmountOutFetched,
@@ -170,7 +161,13 @@ const Swap = () => {
     address: CoinMingleRouter as `0x`,
     abi: CM_ROUTER.abi,
     functionName: "getAmountOut",
-    args: [parseToken(tokenInput.tokenA, tokenA_data?.decimals), routePath],
+    args: [
+      parseUnits(
+        (tokenInput.tokenA as "0") ?? "0",
+        tokenA_data?.decimals || 18
+      ),
+      routePath,
+    ],
     enabled: routePath && tokenInput.fetch ? true : false,
     watch: true,
     onSuccess(data) {
@@ -191,7 +188,10 @@ const Swap = () => {
     abi: CM_ROUTER.abi,
     functionName: "swapTokensForTokens",
     args: [
-      parseToken(tokenInput.tokenA, tokenA_data?.decimals),
+      parseUnits(
+        (tokenInput.tokenA as "0") ?? "0",
+        tokenA_data?.decimals || 18
+      ),
       amountOut,
       routePath,
       address,
@@ -222,7 +222,10 @@ const Swap = () => {
     abi: CM_ROUTER.abi,
     functionName: "swapTokensForFTM",
     args: [
-      parseToken(tokenInput.tokenA, tokenA_data?.decimals),
+      parseUnits(
+        (tokenInput.tokenA as "0") ?? "0",
+        tokenA_data?.decimals || 18
+      ),
       amountOut,
       routePath,
       address,
@@ -233,15 +236,6 @@ const Swap = () => {
   /** @dev Getting Approvals */
   const { data: approvalA } = useContractRead({
     address: activeToken.tokenA as "0x",
-    abi: erc20ABI,
-    functionName: "allowance",
-    args: [address as "0x", CoinMingleRouter],
-    enabled: isConnected && activeToken.tokenA ? true : false,
-    watch: true,
-  });
-
-  const { data: approvalB } = useContractRead({
-    address: activeToken.tokenB as "0x",
     abi: erc20ABI,
     functionName: "allowance",
     args: [address as "0x", CoinMingleRouter],
@@ -290,8 +284,10 @@ const Swap = () => {
   useEffect(() => {
     (async () => {
       try {
+        const loading = toast.loading("Hold On! Fetching tokens");
         const tokens = await getAllTokens();
         setAllTokens(tokens);
+        toast.dismiss(loading);
       } catch (e: any) {
         toast.error(e);
       }
@@ -741,7 +737,7 @@ const Swap = () => {
           </div>
         </div>
       )}
-      <Toaster />
+      <Toaster containerClassName="text-sm" />
     </div>
   );
 };
