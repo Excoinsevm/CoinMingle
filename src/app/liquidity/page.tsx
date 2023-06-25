@@ -740,7 +740,7 @@ const Liquidity = () => {
           </div>
         </div>
       ) : (
-        <div className="h-[35rem] overflow-y-scroll flex flex-col items-center gap-5 hide-scroll">
+        <div className="h-[32rem] overflow-y-scroll flex flex-col items-center gap-5 hide-scroll">
           {allPositions ? (
             allPositions.liquidities.map((position, i) => (
               <LPView

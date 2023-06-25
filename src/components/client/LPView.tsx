@@ -283,7 +283,7 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
     >
       <div className="flex justify-between items-center text-white px-5">
         <div className="">
-          <div className="flex gap-1 text-md">
+          <div className="flex gap-1 text-lg md:text-md">
             <div className="flex items-center">
               <Image src={"/ftm-logo.svg"} alt="" width={20} height={20} />
               <h1 className="text-bold">
@@ -310,51 +310,53 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
             {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
           </p>
         </div>
-        <div className="">
-          <h1 className="text-md font-medium">
-            {Number(amounts.tokenA).toLocaleString()}{" "}
-            {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
-          </h1>
-          {typeof reservesAmounts !== "undefined" && reservesFetched && (
-            <p className="text-sm">
-              Reserve :{" "}
-              {reservesFetched &&
-                parseFloat(
-                  formatToken(
-                    // @ts-ignore
-                    tokenARead === tokens.tokenA
-                      ? // @ts-ignore
-                        reservesAmounts[0]
-                      : // @ts-ignore
-                        reservesAmounts[1],
-                    tokenA_data?.decimals
-                  )!.toString()
-                ).toFixed(2)}
-            </p>
-          )}
-        </div>
-        <div className="">
-          <h1 className="text-md font-medium">
-            {Number(amounts.tokenB).toLocaleString()}{" "}
-            {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
-          </h1>
-          {typeof reservesAmounts !== "undefined" && reservesFetched && (
-            <p className="text-sm">
-              Reserve :{" "}
-              {reservesFetched &&
-                parseFloat(
-                  formatToken(
-                    // @ts-ignore
-                    tokenARead === tokens.tokenA
-                      ? // @ts-ignore
-                        reservesAmounts[1]
-                      : // @ts-ignore
-                        reservesAmounts[0],
-                    tokenB_data?.decimals
-                  )!.toString()
-                ).toFixed(2)}
-            </p>
-          )}
+        <div className="flex flex-col md:flex-row md:w-[70%] justify-around">
+          <div className="">
+            <h1 className="text-md font-medium hidden md:block">
+              {Number(amounts.tokenA).toLocaleString()}{" "}
+              {tokens.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
+            </h1>
+            {typeof reservesAmounts !== "undefined" && reservesFetched && (
+              <p className="text-md md:text-sm">
+                Reserve :{" "}
+                {reservesFetched &&
+                  parseFloat(
+                    formatToken(
+                      // @ts-ignore
+                      tokenARead === tokens.tokenA
+                        ? // @ts-ignore
+                          reservesAmounts[0]
+                        : // @ts-ignore
+                          reservesAmounts[1],
+                      tokenA_data?.decimals
+                    )!.toString()
+                  ).toFixed(2)}
+              </p>
+            )}
+          </div>
+          <div className="">
+            <h1 className="text-md font-medium hidden md:block">
+              {Number(amounts.tokenB).toLocaleString()}{" "}
+              {tokens.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
+            </h1>
+            {typeof reservesAmounts !== "undefined" && reservesFetched && (
+              <p className="text-md md:text-sm">
+                Reserve :{" "}
+                {reservesFetched &&
+                  parseFloat(
+                    formatToken(
+                      // @ts-ignore
+                      tokenARead === tokens.tokenA
+                        ? // @ts-ignore
+                          reservesAmounts[1]
+                        : // @ts-ignore
+                          reservesAmounts[0],
+                      tokenB_data?.decimals
+                    )!.toString()
+                  ).toFixed(2)}
+              </p>
+            )}
+          </div>
         </div>
       </div>
       {fullView && (

@@ -85,7 +85,7 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
           {tokenA.address === WFTM ? "FTM" : tokenA_data?.symbol}
         </p>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex-col items-center hidden sm:flex">
         <p className="text-sm">Reserve</p>
         {reservesFetched && typeof reservesAmounts !== "undefined" ? (
           <p className="text-lg font-medium">
@@ -106,7 +106,7 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
         )}
       </div>
       <div className="">
-        <div className="flex flex-col items-center">
+        <div className="flex-col items-center hidden sm:flex">
           <p className="text-sm">Reserve</p>
           {reservesFetched && typeof reservesAmounts !== "undefined" ? (
             <p className="text-lg font-medium">
