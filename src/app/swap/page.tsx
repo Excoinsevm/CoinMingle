@@ -612,7 +612,7 @@ const Swap = () => {
               ) : (
                 <p>No route available</p>
               )}
-              <p className="text-slate-300 text-sm">Deadline : 10m</p>
+              <p>Fee 0.3%</p>
             </div>
           </>
         )}

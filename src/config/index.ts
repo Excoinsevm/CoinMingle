@@ -9,11 +9,11 @@ import { fantomTestnet } from "wagmi/chains";
 export const chains = [fantomTestnet];
 export const ACTIVE_CHAIN = fantomTestnet;
 export const EXPLORER = "https://testnet.ftmscan.com";
-export const CoinMingleRouter = "0x079D6fDBA5ee8C9d8304276DFd4cfd890cB5f1Ad";
+export const CoinMingleRouter = "0x29Ba82A622dd3C644c2d4EE75D4244C9608e4D1F";
 export const WFTM = "0x812666209b90344ec8e528375298ab9045c2bd08";
 
 /// OTHER CONFIG
-export const WALLETCONNECT_VERSION = 2;
+export const WALLETCONNECT_VERSION = 1;
 export const PROJECT_ID = process.env.PROJECT_ID as string;
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const POOL_PATH = "/api/pool";
