@@ -17,8 +17,12 @@ const NavBar = () => {
   return (
     <nav className="py-4 flex flex-row items-center justify-between">
       <div className="flex items-center gap-10">
-        <Link href={"/"} className="font-semibold text-white">
-          CoinMingle
+        <Link
+          href={"/"}
+          className="font-medium text-white text-lg flex items-center gap-1"
+        >
+          <Image src={"/logo.svg"} alt="CoinMingle" width={40} height={40} />
+          <span>CoinMingle</span>
         </Link>
         <ul className="hidden md:flex items-center gap-6 text-slate-400 font-medium">
           {Links.map((link) => (
