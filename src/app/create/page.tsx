@@ -7,7 +7,7 @@ import {
   useWalletClient,
 } from "wagmi";
 import { ChangeEvent, FormEvent, useState, memo } from "react";
-import { Interface, concat, hexlify } from "ethers/lib/utils";
+import { Interface, concat, hexlify } from "ethers";
 import { Toaster, toast } from "react-hot-toast";
 import { TransactionReceipt } from "viem";
 import { ACTIVE_CHAIN, EXPLORER } from "@config";

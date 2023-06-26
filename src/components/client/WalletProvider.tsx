@@ -7,12 +7,7 @@ import {
 import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { ReactNode, memo, useState, useEffect } from "react";
-import {
-  PROJECT_ID,
-  WALLETCONNECT_VERSION,
-  chains,
-  themeVariables,
-} from "@config";
+import { PROJECT_ID, chains, themeVariables } from "@config";
 
 /// Initializing publicClient
 const { publicClient } = configureChains(chains, [
@@ -23,7 +18,7 @@ const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({
     projectId: PROJECT_ID,
-    version: WALLETCONNECT_VERSION,
+    version: 2,
     chains,
   }),
   publicClient,
