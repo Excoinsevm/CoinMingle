@@ -459,7 +459,7 @@ const Swap = () => {
   };
 
   return (
-    <div className="w-[90%] items-center flex flex-col gap-10">
+    <div className="w-[90%] items-center flex flex-col gap-10 py-20">
       <header className="text-center flex flex-col gap-4">
         <h1 className="text-xl">Swap</h1>
         <p className="text-sm text-slate-300 max-w-xl text-center">
@@ -586,26 +586,34 @@ const Swap = () => {
           <>
             <div className="flex items-center justify-between mt-2 text-sm">
               <p className="flex items-center justify-center text-slate-300">
-                1 {tokenA_data?.symbol} ={" "}
+                1 {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol} ={" "}
                 {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
-                {tokenB_data?.symbol}
+                {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </p>
               <p className="flex items-center justify-center text-slate-300">
                 Expected Output :{" "}
                 {formatToken(amountOut as BigInt, tokenB_data?.decimals)}{" "}
-                {tokenB_data?.symbol}
+                {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </p>
             </div>
 
             <div className="mt-1 text-sm flex justify-between items-center">
               {routeContent ? (
                 <p>
-                  Route : {tokenA_data?.symbol}
+                  Route :{" "}
+                  {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol}
                   {routeContent.map((content, i) =>
                     i !== routeContent.length ? (
-                      <span key={i}> &#8674; {content.symbol}</span>
+                      <span key={i}>
+                        {" "}
+                        &#8674;{" "}
+                        {content.address === WFTM ? "FTM" : content.symbol}
+                      </span>
                     ) : (
-                      <span key={i}> {content.symbol}</span>
+                      <span key={i}>
+                        {" "}
+                        {content.address === WFTM ? "FTM" : content.symbol}
+                      </span>
                     )
                   )}
                 </p>

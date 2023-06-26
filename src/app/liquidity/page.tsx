@@ -494,7 +494,7 @@ const Liquidity = () => {
   };
 
   return (
-    <div className="flex flex-col justify-evenly w-[90%] lg:w-[60%]">
+    <div className="flex flex-col justify-evenly w-[90%] lg:w-[60%] py-20">
       <header className="text-center flex flex-col gap-3 items-center">
         <h1 className="text-xl font-medium">Pool</h1>
       </header>
@@ -740,7 +740,7 @@ const Liquidity = () => {
           </div>
         </div>
       ) : (
-        <div className="h-[32rem] overflow-y-scroll flex flex-col items-center gap-5 hide-scroll">
+        <div className="min-h-[32rem] overflow-y-scroll flex flex-col items-center gap-5 hide-scroll">
           {allPositions ? (
             allPositions.liquidities.map((position, i) => (
               <LPView

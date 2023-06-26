@@ -124,7 +124,7 @@ const CreateERC20 = () => {
   });
 
   return (
-    <div className="flex flex-col h-full justify-center text-center text-white">
+    <div className="flex flex-col py-24 justify-center text-center text-white">
       <header>
         <h1 className="text-xl font-medium">Create ERC20 Token</h1>
         <p className="text-sm text-slate-300 mt-2 w-[85%] md:w-[70%] lg:w-[60%] m-auto">
@@ -132,7 +132,7 @@ const CreateERC20 = () => {
           valuable for launching new projects or enhancing liquidity by
           introducing new tokens.
         </p>
-        <div className="pt-5">
+        <div className="pt-16">
           {contractAddress && (
             <a
               target="_blank"
@@ -155,7 +155,7 @@ const CreateERC20 = () => {
               placeholder="Coin Mingle"
               id="name"
               name="name"
-              className="w-full h-10 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
+              className="w-full h-8 px-4 bg-transparent border-b transition-all focus:border-b-green-500 outline-none"
               onChange={(e) => onChange(e)}
               value={tokenData.name}
               required
@@ -218,6 +218,8 @@ const CreateERC20 = () => {
             >
               {isSwitchingChain
                 ? "Switching Chain..."
+                : isFetching
+                ? "Waiting for receipt"
                 : isDeploying
                 ? "Deploying.."
                 : isSwitchingChain

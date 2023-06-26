@@ -22,9 +22,9 @@ const Market = () => {
   }, []);
 
   return (
-    <div className="w-[90%] lg:w-[60%] h-[90%] flex flex-col items-center">
+    <div className="w-[90%] lg:w-[60%] py-20 flex flex-col items-center">
       <h1 className="mb-10 text-lg font-medium underline">Market Overview</h1>
-      <div className="overflow-y-scroll h-full w-full flex flex-col items-center gap-5 hide-scroll">
+      <div className="overflow-y-scroll h-[32rem] w-full flex flex-col items-center gap-5 hide-scroll">
         {allPairs ? (
           allPairs.map((pair: ITokens, i: number) => (
             <PairView key={i} tokenA={pair.tokenA} tokenB={pair.tokenB} />

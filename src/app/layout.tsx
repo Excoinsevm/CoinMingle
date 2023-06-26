@@ -19,11 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${font.className} w-[90%] flex flex-col justify-evenly max-w-screen-2xl min-h-screen m-auto`}
+        className={`${font.className} w-[90%] flex flex-col justify-evenly max-w-screen-2xl min-h-screen m-auto pb-10`}
       >
         <WalletProvider>
           <NavBar />
-          <main className="bg-white h-[85vh] bg-opacity-20 backdrop-blur-3xl rounded-2xl flex justify-center items-center">
+          <main className="bg-white min-h-[90vh] bg-opacity-20 backdrop-blur-3xl rounded-2xl flex justify-center items-center">
             {children}
           </main>
         </WalletProvider>

@@ -76,7 +76,7 @@ const PairView: FC<ITokens> = ({ tokenA, tokenB }) => {
           {isPerTokenFetched && tokenA_data && tokenB_data
             ? parseFloat(
                 formatToken(
-                  perTokenOut as BigInt,
+                  (perTokenOut as BigInt) || 0,
                   tokenB_data?.decimals
                 )!.toString()
               ).toFixed(2)
