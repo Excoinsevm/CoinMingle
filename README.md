@@ -33,8 +33,16 @@ The AMM smart contract and Next.js frontend provide the following functionalitie
 
 ## **👨🏻‍💻 Tech Stack**
 
-- **Client** : NextJS, React, TypeScript, TailwindCSS, Walletconnect, Wagmi.
+- **Client** : NextJS, React, TypeScript, TailwindCSS, Walletconnect, Wagmi, MongoDB.
 - **Blockchain** : Solidity, Hardhat, Openzeppelin, Fantom.
+
+</br>
+
+## **‼️ Code Base**
+
+- **Production Code** : [View](/)
+- **EVM Contract Codes** : [View](/tree/blockchain)
+- **Development Frontend Codes** : [View](/tree/frontend)
 
 </br>
 
