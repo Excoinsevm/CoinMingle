@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// bg-gradient-to-b from-teal-400 to-yellow-200
+
+body {
+  background: radial-gradient(
+    circle at 52.1% -29.6%,
+    #901169 0%,
+    #330083 100.2%
+  );
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+
+  @apply text-white;
+}
+
+.btn {
+  @apply rounded-lg bg-white disabled:opacity-40 text-black;
+}
+
+.hide-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
