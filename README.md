@@ -24,10 +24,10 @@ The AMM smart contract and Next.js frontend provide the following functionalitie
 
 </br>
 
-## **🏹 Deployed Addresses**
+## **🏹 Deployed Addresses (CoinMingleRouter)**
 
-- **Mainnet** : [`0xabc`](https://ftmscan.com)
-- **Testnet** : [`0xdef`](https://testnet.ftmscan.com)
+- **Mainnet** : [`0xdAF48C05573B92F2B50d75E9A0Db91F5B83Ca359`](https://ftmscan.com/address/0xdaf48c05573b92f2b50d75e9a0db91f5b83ca359)
+- **Testnet** : [`0x6B37410133cDC3365fFd80008b6C1040Db83a04f`](https://testnet.ftmscan.com/address/0x6B37410133cDC3365fFd80008b6C1040Db83a04f)
 
 </br>
 
