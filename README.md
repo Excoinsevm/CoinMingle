@@ -40,9 +40,8 @@ The AMM smart contract and Next.js frontend provide the following functionalitie
 
 ## **‼️ Code Base**
 
-- **Production Code** : [View](/)
-- **EVM Contract Codes** : [View](/tree/blockchain)
-- **Development Frontend Codes** : [View](/tree/frontend)
+- **EVM Contract Codes** : [View](https://github.com/007aryansaini/CoinMingle/tree/blockchain)
+- **Development Frontend Codes** : [View](https://github.com/007aryansaini/CoinMingle/tree/frontend)
 
 </br>
 
