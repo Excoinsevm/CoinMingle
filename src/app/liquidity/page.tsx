@@ -73,6 +73,7 @@ const Liquidity = () => {
     (async () => {
       if (address) {
         try {
+          toast.dismiss();
           const loading = toast.loading("Hold On! Fetching positions...");
           const positions = await getUserPositions(address);
           setAllPositions(() => positions);

@@ -13,7 +13,7 @@ import {
 import { formatEther, parseEther, TransactionReceipt } from "viem";
 import { ACTIVE_CHAIN, CoinMingleRouter, EXPLORER, WFTM } from "@config";
 import { parseToken, formatToken } from "@utils";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import CM_ROUTER from "@abis/Router.json";
 import CM_LP from "@abis/LP.json";
 import Image from "next/image";
@@ -474,7 +474,6 @@ const LPView: FC<ILPViewProps> = ({ tokens, amounts }) => {
           </form>
         </div>
       )}
-      <Toaster />
     </div>
   );
 };
