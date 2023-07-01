@@ -1,6 +1,18 @@
 /// Mainnet Chain
 import { fantom } from "wagmi/chains";
-export const chains = [fantom];
+export const chains = [
+  {
+    ...fantom,
+    rpcUrls: {
+      default: {
+        http: ["https://rpc.ftm.tools/"],
+      },
+      public: {
+        http: ["https://rpc.ftm.tools/"],
+      },
+    },
+  },
+];
 export const ACTIVE_CHAIN = fantom;
 export const EXPLORER = "https://ftmscan.com";
 export const CoinMingleRouter = "0xdAF48C05573B92F2B50d75E9A0Db91F5B83Ca359";
