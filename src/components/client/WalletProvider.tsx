@@ -6,19 +6,20 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 import { ReactNode, memo, useState, useEffect } from "react";
 import { PROJECT_ID, chains, themeVariables } from "@config";
 
 /// Initializing publicClient
 const { publicClient } = configureChains(chains, [
   w3mProvider({ projectId: PROJECT_ID }),
+  publicProvider(),
 ]);
 /// Initializing wagmiConfig
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({
     projectId: PROJECT_ID,
-    version: 2,
     chains,
   }),
   publicClient,
