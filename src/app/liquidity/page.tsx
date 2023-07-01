@@ -561,7 +561,12 @@ const Liquidity = () => {
                   Balance :{" "}
                   {activeToken.tokenA === WFTM
                     ? parseFloat(balanceFTM?.formatted as string).toFixed(4)
-                    : formatToken(balanceOf?.[0].result, tokenA_data?.decimals)}
+                    : parseFloat(
+                        formatToken(
+                          balanceOf?.[0].result,
+                          tokenA_data?.decimals
+                        )!.toString()
+                      ).toFixed(4)}
                 </p>
               </div>
             </div>
@@ -615,7 +620,12 @@ const Liquidity = () => {
                   Balance :{" "}
                   {activeToken.tokenB === WFTM
                     ? parseFloat(balanceFTM?.formatted as string).toFixed(4)
-                    : formatToken(balanceOf?.[1].result, tokenB_data?.decimals)}
+                    : parseFloat(
+                        formatToken(
+                          balanceOf?.[1].result,
+                          tokenB_data?.decimals
+                        )!.toString()
+                      ).toFixed(4)}
                 </p>
               </div>
             </div>
@@ -674,10 +684,12 @@ const Liquidity = () => {
                     } / ${
                       activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol
                     }`
-                  : `${formatToken(
-                      perTokenOut as BigInt,
-                      tokenB_data?.decimals
-                    )} ${
+                  : `${parseFloat(
+                      formatToken(
+                        perTokenOut as BigInt,
+                        tokenB_data?.decimals
+                      )!.toString()
+                    ).toFixed(4)} ${
                       activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol
                     } / ${
                       activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol
@@ -694,14 +706,16 @@ const Liquidity = () => {
                 <p>
                   {pairAddress === NULL_ADDRESS
                     ? "0"
-                    : formatToken(
-                        tokenARead === activeToken.tokenA
-                          ? // @ts-ignore
-                            reservesAmounts[0]
-                          : // @ts-ignore
-                            reservesAmounts[1],
-                        tokenA_data?.decimals
-                      )}
+                    : parseFloat(
+                        formatToken(
+                          tokenARead === activeToken.tokenA
+                            ? // @ts-ignore
+                              reservesAmounts[0]
+                            : // @ts-ignore
+                              reservesAmounts[1],
+                          tokenA_data?.decimals
+                        )!.toString()
+                      ).toFixed(4)}
                 </p>
               )}
             </div>
@@ -715,15 +729,17 @@ const Liquidity = () => {
                 <p>
                   {pairAddress === NULL_ADDRESS
                     ? "0"
-                    : formatToken(
-                        // @ts-ignore
-                        tokenARead === activeToken.tokenA
-                          ? // @ts-ignore
-                            reservesAmounts[1]
-                          : // @ts-ignore
-                            reservesAmounts[0],
-                        tokenB_data?.decimals
-                      )}
+                    : parseFloat(
+                        formatToken(
+                          // @ts-ignore
+                          tokenARead === activeToken.tokenA
+                            ? // @ts-ignore
+                              reservesAmounts[1]
+                            : // @ts-ignore
+                              reservesAmounts[0],
+                          tokenB_data?.decimals
+                        )!.toString()
+                      ).toFixed(4)}
                 </p>
               )}
             </div>

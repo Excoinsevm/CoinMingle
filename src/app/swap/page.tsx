@@ -510,7 +510,12 @@ const Swap = () => {
               pairAddressA !== NULL_ADDRESS ? (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
-                  {formatToken(balanceOf?.[2].result, tokenA_data?.decimals)}
+                  {parseFloat(
+                    formatToken(
+                      balanceOf?.[2].result,
+                      tokenA_data?.decimals
+                    )!.toString()
+                  ).toFixed(4)}
                 </p>
               ) : null}
             </div>
@@ -520,8 +525,13 @@ const Swap = () => {
                 {activeToken.tokenA === WFTM
                   ? parseFloat(
                       formatToken(balanceOfFTM?.value, 18)!.toString()
-                    ).toFixed(5)
-                  : formatToken(balanceOf?.[0].result, tokenA_data?.decimals)}
+                    ).toFixed(4)
+                  : parseFloat(
+                      formatToken(
+                        balanceOf?.[0].result,
+                        tokenA_data?.decimals
+                      )!.toString()
+                    ).toFixed(4)}
               </p>
             )}
           </div>
@@ -565,7 +575,12 @@ const Swap = () => {
               {routePath && typeof balanceOf !== "undefined" && (
                 <p className="text-sm text-slate-300">
                   Reserve :{" "}
-                  {formatToken(balanceOf?.[3].result, tokenB_data?.decimals)}
+                  {parseFloat(
+                    formatToken(
+                      balanceOf?.[3].result,
+                      tokenB_data?.decimals
+                    )!.toString()
+                  ).toFixed(4)}
                 </p>
               )}
             </div>
@@ -576,7 +591,12 @@ const Swap = () => {
                   ? parseFloat(
                       formatToken(balanceOfFTM?.value, 18)!.toString()
                     ).toFixed(5)
-                  : formatToken(balanceOf?.[1].result, tokenB_data?.decimals)}
+                  : parseFloat(
+                      formatToken(
+                        balanceOf?.[1].result,
+                        tokenB_data?.decimals
+                      )!.toString()
+                    ).toFixed(5)}
               </p>
             )}
           </div>
@@ -587,12 +607,22 @@ const Swap = () => {
             <div className="flex items-center justify-between mt-2 text-sm">
               <p className="flex items-center justify-center text-slate-300">
                 1 {activeToken.tokenA === WFTM ? "FTM" : tokenA_data?.symbol} ={" "}
-                {formatToken(perTokenOut as BigInt, tokenB_data?.decimals)}{" "}
+                {parseFloat(
+                  formatToken(
+                    perTokenOut as BigInt,
+                    tokenB_data?.decimals
+                  )!.toString()
+                ).toFixed(8)}{" "}
                 {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </p>
               <p className="flex items-center justify-center text-slate-300">
                 Expected Output :{" "}
-                {formatToken(amountOut as BigInt, tokenB_data?.decimals)}{" "}
+                {parseFloat(
+                  formatToken(
+                    amountOut as BigInt,
+                    tokenB_data?.decimals
+                  )!.toString()
+                ).toFixed(5)}{" "}
                 {activeToken.tokenB === WFTM ? "FTM" : tokenB_data?.symbol}
               </p>
             </div>
