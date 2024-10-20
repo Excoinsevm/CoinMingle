@@ -1,22 +1,22 @@
 /// Mainnet Chain
-import { fantom } from "wagmi/chains";
+import { bitrock } from "../chains";
 export const chains = [
   {
-    ...fantom,
+    ...bitrock,
     rpcUrls: {
       default: {
-        http: ["https://rpc.ftm.tools/"],
+        http: ["https://connect.bit-rock.io/"],
       },
       public: {
-        http: ["https://rpc.ftm.tools/"],
+        http: ["https://connect.bit-rock.io/"],
       },
     },
   },
 ];
 export const ACTIVE_CHAIN = fantom;
-export const EXPLORER = "https://ftmscan.com";
-export const CoinMingleRouter = "0xdAF48C05573B92F2B50d75E9A0Db91F5B83Ca359";
-export const WFTM = "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83";
+export const EXPLORER = "https://explorer.bit-rock.io";
+export const CoinMingleRouter = "0x28011841A9E8D782a3B58da3e757fc939cca84B3";
+export const WFTM = "0x413f0e3a440aba7a15137f4278121450416882d5";
 
 /// Testnet Chain
 // import { fantomTestnet } from "wagmi/chains";
